@@ -1,25 +1,25 @@
-import { LogFindersRuleSet } from "../types"
+import { LogFindersActionRuleSet } from "../types";
 
 const rules = {
   msgSendRule: {
     type: "transfer",
-    attributes: [["recipient"], ["sender"], ["amount"]],
+    attributes: [["recipient"], ["sender"], ["amount"]]
   },
   msgWithdrawDelegationRewardRule: {
     type: "withdraw_rewards",
-    attributes: [["amount"], ["validator"]],
+    attributes: [["amount"], ["validator"]]
   },
   msgVoteRule: {
     type: "proposal_vote",
-    attributes: [["option"], ["proposal_id"]],
+    attributes: [["option"], ["proposal_id"]]
   },
   msgSubmitProposalRule: {
     type: "submit_proposal",
-    attributes: [["proposal_id"], ["proposal_type"], ["voting_period_start"]],
+    attributes: [["proposal_id"], ["proposal_type"], ["voting_period_start"]]
   },
   msgDepositRule: {
     type: "proposal_deposit",
-    attributes: [["amount"], ["proposal_id"]],
+    attributes: [["amount"], ["proposal_id"]]
   },
   msgSwapRule: {
     type: "swap",
@@ -28,8 +28,8 @@ const rules = {
       ["trader"],
       ["recipient"],
       ["swap_coin"],
-      ["swap_fee"],
-    ],
+      ["swap_fee"]
+    ]
   },
   msgSwapTerraSwapRule: {
     type: "from_contract",
@@ -42,48 +42,48 @@ const rules = {
       ["return_amount"],
       ["tax_amount"],
       ["spread_amount"],
-      ["commission_amount"],
-    ],
+      ["commission_amount"]
+    ]
   },
   msgExchangeRateVoteRule: {
     type: "vote",
-    attributes: [["denom"], ["voter"], ["exchange_rate"], ["feeder"]],
+    attributes: [["denom"], ["voter"], ["exchange_rate"], ["feeder"]]
   },
   msgExchangeRatePrevoteRule: {
     type: "prevote",
-    attributes: [["denom"], ["voter"], ["feeder"]],
+    attributes: [["denom"], ["voter"], ["feeder"]]
   },
   msgAggregateExchangeRateVoteRule: {
     type: "aggregate_vote",
-    attributes: [["voter"], ["exchange_rates"], ["feeder"]],
+    attributes: [["voter"], ["exchange_rates"], ["feeder"]]
   },
   msgAggregateExchangeRatePrevoteRule: {
     type: "aggregate_prevote",
-    attributes: [["voter"], ["feeder"]],
+    attributes: [["voter"], ["feeder"]]
   },
   msgUnjailRule: {
     type: "message",
-    attributes: [["action", "unjail"], ["module", "slashing"], ["sender"]],
+    attributes: [["action", "unjail"], ["module", "slashing"], ["sender"]]
   },
   msgUndelegateRule: {
     type: "unbond",
-    attributes: [["validator"], ["amount"], ["completion_time"]],
+    attributes: [["validator"], ["amount"], ["completion_time"]]
   },
   msgEditValidatorRule: {
     type: "message",
     attributes: [
       ["action", "edit_validator"],
       ["module", "staking"],
-      ["sender"],
-    ],
+      ["sender"]
+    ]
   },
   msgDelegateRule: {
     type: "delegate",
-    attributes: [["validator"], ["amount"]],
+    attributes: [["validator"], ["amount"]]
   },
   msgCreateValidatorRule: {
     type: "create_validator",
-    attributes: [["validator"], ["amount"]],
+    attributes: [["validator"], ["amount"]]
   },
   msgBeginRedelegateRule: {
     type: "redelegate",
@@ -91,240 +91,232 @@ const rules = {
       ["source_validator"],
       ["destination_validator"],
       ["amount"],
-      ["completion_time"],
-    ],
+      ["completion_time"]
+    ]
   },
   msgStoreCodeRule: {
     type: "store_code",
-    attributes: [["sender"], ["code_id"]],
+    attributes: [["sender"], ["code_id"]]
   },
   msgMigrateContractRule: {
     type: "migrate_contract",
-    attributes: [["code_id"], ["contract_address"]],
+    attributes: [["code_id"], ["contract_address"]]
   },
   msgInstantiateContractRule: {
     type: "instantiate_contract",
-    attributes: [["owner"], ["code_id"], ["contract_address"]],
+    attributes: [["owner"], ["code_id"], ["contract_address"]]
   },
   msgMultiSendRule: {
     type: "transfer",
-    attributes: [["recipient"], ["amount"]],
-  },
-}
+    attributes: [["recipient"], ["amount"]]
+  }
+};
 
 const create = () => {
-  const msgSendRuleSet: LogFindersRuleSet = {
+  const msgSendRuleSet: LogFindersActionRuleSet = {
     rule: rules.msgSendRule,
     transform: (fragment, matched) => ({
       msgType: "terra/send",
       canonicalMsg: [
-        `${matched[1].value} send ${matched[2].value} to ${matched[0].value}`,
+        `${matched[1].value} send ${matched[2].value} to ${matched[0].value}`
       ],
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const msgWithdrawDelegationRewardRuleSet: LogFindersRuleSet = {
+  const msgWithdrawDelegationRewardRuleSet: LogFindersActionRuleSet = {
     rule: rules.msgWithdrawDelegationRewardRule,
     transform: (fragment, matched) => ({
       msgType: "terra/withdraw-delegation-reward",
       canonicalMsg: [`Withdraw ${matched[0].value} from ${matched[1].value}`],
-      amountIn: `${matched[0].value}`,
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const msgVoteRuleSet: LogFindersRuleSet = {
+  const msgVoteRuleSet: LogFindersActionRuleSet = {
     rule: rules.msgVoteRule,
     transform: (fragment, matched) => ({
       msgType: "terra/vote",
       canonicalMsg: [
-        `Vote ${matched[0].value} (Proposal ID: ${matched[1].value})`,
+        `Vote ${matched[0].value} (Proposal ID: ${matched[1].value})`
       ],
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const msgSubmitProposalRuleSet: LogFindersRuleSet = {
+  const msgSubmitProposalRuleSet: LogFindersActionRuleSet = {
     rule: rules.msgSubmitProposalRule,
     transform: (fragment, matched) => ({
       msgType: "terra/submit-proposal",
       canonicalMsg: [`Create proposal (Proposal ID: ${matched[0].value})`],
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const msgDepositRuleSet: LogFindersRuleSet = {
+  const msgDepositRuleSet: LogFindersActionRuleSet = {
     rule: rules.msgDepositRule,
     transform: (fragment, matched) => ({
       msgType: "terra/deposit",
       canonicalMsg: [
-        `Deposit ${matched[0].value} (Proposal ID: ${matched[1].value})`,
+        `Deposit ${matched[0].value} (Proposal ID: ${matched[1].value})`
       ],
-      amountOut: `${matched[0].value}`,
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const msgSwapRuleSet: LogFindersRuleSet = {
+  const msgSwapRuleSet: LogFindersActionRuleSet = {
     rule: rules.msgSwapRule,
     transform: (fragment, matched) => ({
       msgType: "terra/swap",
       canonicalMsg: [`Swap ${matched[0].value} for ${matched[3].value}`],
-      amountIn: `${matched[3].value}`,
-      amountOut: `${matched[0].value}`,
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const msgExchangeRateVoteRuleSet: LogFindersRuleSet = {
+  const msgExchangeRateVoteRuleSet: LogFindersActionRuleSet = {
     rule: rules.msgExchangeRateVoteRule,
     transform: (fragment, matched) => ({
       msgType: "terra/exchange-rate-vote",
       canonicalMsg: [`Vote ${matched[2].value} for ${matched[0].value}`],
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const msgExchangeRatePrevoteRuleRuleSet: LogFindersRuleSet = {
+  const msgExchangeRatePrevoteRuleRuleSet: LogFindersActionRuleSet = {
     rule: rules.msgExchangeRatePrevoteRule,
     transform: (fragment, matched) => ({
       msgType: "terra/exchange-rate-prevote",
       canonicalMsg: [`Prevote for ${matched[0].value}`],
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const msgAggregateExchangeRateVoteRuleSet: LogFindersRuleSet = {
+  const msgAggregateExchangeRateVoteRuleSet: LogFindersActionRuleSet = {
     rule: rules.msgAggregateExchangeRateVoteRule,
     transform: (fragment, matched) => ({
       msgType: "terra/aggregate-exchange-rate-vote",
       canonicalMsg: [`Vote ${matched[1].value}`],
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const msgAggregateExchangeRatePrevoteRuleSet: LogFindersRuleSet = {
+  const msgAggregateExchangeRatePrevoteRuleSet: LogFindersActionRuleSet = {
     rule: rules.msgAggregateExchangeRatePrevoteRule,
-    transform: (fragment) => ({
+    transform: fragment => ({
       msgType: "terra/aggregate-exchange-rate-prevote",
       canonicalMsg: [`Prevote for all`],
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const msgUnjailRuleSet: LogFindersRuleSet = {
+  const msgUnjailRuleSet: LogFindersActionRuleSet = {
     rule: rules.msgUnjailRule,
     transform: (fragment, matched) => ({
       msgType: "terra/unjail",
       canonicalMsg: [`Unjail ${matched[2].value}`],
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const msgUndelegateRuleSet: LogFindersRuleSet = {
+  const msgUndelegateRuleSet: LogFindersActionRuleSet = {
     rule: rules.msgUndelegateRule,
     transform: (fragment, matched) => ({
       msgType: "terra/undelegate",
       canonicalMsg: [
-        `Undelegate ${matched[1].value}uluna to ${matched[0].value}`,
+        `Undelegate ${matched[1].value}uluna to ${matched[0].value}`
       ],
-      amountIn: `${matched[1].value}uluna`,
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const msgEditValidatorRuleSet: LogFindersRuleSet = {
+  const msgEditValidatorRuleSet: LogFindersActionRuleSet = {
     rule: rules.msgEditValidatorRule,
     transform: (fragment, matched) => ({
       msgType: "terra/edit-validator",
       canonicalMsg: [`Edit ${matched[2].value}`],
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const msgDelegateRuleSet: LogFindersRuleSet = {
+  const msgDelegateRuleSet: LogFindersActionRuleSet = {
     rule: rules.msgDelegateRule,
     transform: (fragment, matched) => ({
       msgType: "terra/delegate",
       canonicalMsg: [
-        `Delegate ${matched[1].value}uluna to ${matched[0].value}`,
+        `Delegate ${matched[1].value}uluna to ${matched[0].value}`
       ],
-      amountOut: `${matched[1].value}uluna`,
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const msgCreateValidatorRuleSet: LogFindersRuleSet = {
+  const msgCreateValidatorRuleSet: LogFindersActionRuleSet = {
     rule: rules.msgCreateValidatorRule,
     transform: (fragment, matched) => ({
       msgType: "terra/create-validator",
       canonicalMsg: [`Create ${matched[0].value}`],
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const msgBeginRedelegateRuleSet: LogFindersRuleSet = {
+  const msgBeginRedelegateRuleSet: LogFindersActionRuleSet = {
     rule: rules.msgBeginRedelegateRule,
     transform: (fragment, matched) => ({
       msgType: "terra/begin-redelegate",
       canonicalMsg: [
-        `Redelegate ${matched[2].value}uluna to ${matched[1].value}`,
+        `Redelegate ${matched[2].value}uluna to ${matched[1].value}`
       ],
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const msgStoreCodeRuleSet: LogFindersRuleSet = {
+  const msgStoreCodeRuleSet: LogFindersActionRuleSet = {
     rule: rules.msgStoreCodeRule,
     transform: (fragment, matched) => ({
       msgType: "terra/store-code",
       canonicalMsg: [`Store ${matched[1].value}`],
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const msgMigrateContractRuleSet: LogFindersRuleSet = {
+  const msgMigrateContractRuleSet: LogFindersActionRuleSet = {
     rule: rules.msgMigrateContractRule,
     transform: (fragment, matched) => ({
       msgType: "terra/migrate-contract",
       canonicalMsg: [`Migrate ${matched[1].value} to code ${matched[0].value}`],
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const msgInstantiateContractRuleSet: LogFindersRuleSet = {
+  const msgInstantiateContractRuleSet: LogFindersActionRuleSet = {
     rule: rules.msgInstantiateContractRule,
     transform: (fragment, matched) => ({
       msgType: "terra/instantiate-contract",
       canonicalMsg: [
-        `Instantiate ${matched[2].value} from code ${matched[1].value}`,
+        `Instantiate ${matched[2].value} from code ${matched[1].value}`
       ],
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const msgSwapTerraSwapRuleSet: LogFindersRuleSet = {
+  const msgSwapTerraSwapRuleSet: LogFindersActionRuleSet = {
     rule: rules.msgSwapTerraSwapRule,
     transform: (fragment, matched) => ({
       msgType: "terra/swap",
       canonicalMsg: [
-        `Swap ${matched[4].value}${matched[2].value} for ${matched[5].value}${matched[3].value}`,
+        `Swap ${matched[4].value}${matched[2].value} for ${matched[5].value}${matched[3].value}`
       ],
-      amountIn: `${matched[5].value}${matched[3].value}`,
-      amountOut: `${matched[4].value}${matched[2].value}`,
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const msgMultiSendRuleSet: LogFindersRuleSet = {
+  const msgMultiSendRuleSet: LogFindersActionRuleSet = {
     rule: rules.msgMultiSendRule,
     transform: (fragment, matched) => ({
       msgType: "terra/multi-send",
       canonicalMsg: [`Send ${matched[1].value} to ${matched[0].value}`],
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
   return [
     msgSendRuleSet,
@@ -347,7 +339,7 @@ const create = () => {
     msgMigrateContractRuleSet,
     msgInstantiateContractRuleSet,
     msgSwapTerraSwapRuleSet,
-    msgMultiSendRuleSet,
-  ]
-}
-export default create
+    msgMultiSendRuleSet
+  ];
+};
+export default create;

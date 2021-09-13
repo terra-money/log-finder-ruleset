@@ -13,7 +13,7 @@ export const mainnet: MirrorAddresses = {
   govAddress: "terra1wh39swv7nq36pnefnupttm2nr96kz7jjddyt2x",
   airdropAddress: "terra1kalp2knjm4cs3f59ukr4hdhuuncp648eqrgshw",
   limitOrderAddress: "terra1zpr8tq3ts96mthcdkukmqq4y9lhw0ycevsnw89",
-  MIRAddress: "terra15gwkyepfc6xgca5t5zefzwy42uts8l2m4g40k6",
+  MIRAddress: "terra15gwkyepfc6xgca5t5zefzwy42uts8l2m4g40k6"
 }
 
 export const testnet: MirrorAddresses = {
@@ -22,5 +22,5 @@ export const testnet: MirrorAddresses = {
   govAddress: "terra12r5ghc6ppewcdcs3hkewrz24ey6xl7mmpk478s",
   airdropAddress: "terra1p6nvyw7vz3fgpy4nyh3q3vc09e65sr97ejxn2p",
   limitOrderAddress: "terra1vc4ch0z3n6c23f9uywzy5yqaj2gmpnam8qgge7",
-  MIRAddress: "terra10llyp6v3j3her8u3ce66ragytu45kcmd9asj3u",
+  MIRAddress: "terra10llyp6v3j3her8u3ce66ragytu45kcmd9asj3u"
 }

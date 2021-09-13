@@ -1,4 +1,4 @@
-import { LogFindersRuleSet } from "../types"
+import { LogFindersActionRuleSet } from "../types";
 
 const rules = {
   provideLiquidityRule: {
@@ -17,8 +17,8 @@ const rules = {
       ["contract_address"],
       ["action"],
       ["to"],
-      ["amount"],
-    ],
+      ["amount"]
+    ]
   },
   provideLiquidityRuleTypeB: {
     type: "from_contract",
@@ -36,8 +36,8 @@ const rules = {
       ["contract_address"],
       ["action"],
       ["to"],
-      ["amount"],
-    ],
+      ["amount"]
+    ]
   },
   withdrawLiquidityRuleTypeA: {
     type: "from_contract",
@@ -59,8 +59,8 @@ const rules = {
       ["contract_address"],
       ["action"],
       ["from"],
-      ["amount"],
-    ],
+      ["amount"]
+    ]
   },
   withdrawLiquidityRuleTypeB: {
     type: "from_contract",
@@ -77,8 +77,8 @@ const rules = {
       ["contract_address"],
       ["action"],
       ["from"],
-      ["amount"],
-    ],
+      ["amount"]
+    ]
   },
   ustToTokenSwapRule: {
     type: "from_contract",
@@ -96,8 +96,8 @@ const rules = {
       ["action"],
       ["from"],
       ["to"],
-      ["amount"],
-    ],
+      ["amount"]
+    ]
   },
   transferRule: {
     type: "from_contract",
@@ -106,70 +106,64 @@ const rules = {
       ["action", "transfer"],
       ["from"],
       ["to"],
-      ["amount"],
-    ],
-  },
-}
+      ["amount"]
+    ]
+  }
+};
 
 const create = () => {
-  const provideLiquidityRuleSet: LogFindersRuleSet = {
+  const provideLiquidityRuleSet: LogFindersActionRuleSet = {
     rule: rules.provideLiquidityRule,
     transform: (fragment, matched) => ({
       msgType: "token/provide-liquidity",
       canonicalMsg: [
         `Provide ${matched[2].value} Liquidity to ${matched[0].value}`,
-        `Mint ${matched[13].value}${matched[10].value}`,
+        `Mint ${matched[13].value}${matched[10].value}`
       ],
-      amountIn: `${matched[13].value}${matched[10].value}`,
-      amountOut: `${matched[2].value}`,
-      payload: fragment,
-    }),
-  }
-  const withdrawLiquidityRuleSetTypeA: LogFindersRuleSet = {
+      payload: fragment
+    })
+  };
+  const withdrawLiquidityRuleSetTypeA: LogFindersActionRuleSet = {
     rule: rules.withdrawLiquidityRuleTypeA,
     transform: (fragment, matched) => ({
       msgType: "token/withdraw-liquidity",
       canonicalMsg: [
         `Withdraw ${matched[8].value} Liquidity from ${matched[5].value}`,
-        `Burn ${matched[17].value}${matched[14].value}`,
+        `Burn ${matched[17].value}${matched[14].value}`
       ],
-      amountIn: `${matched[8].value}`,
-      amountOut: `${matched[17].value}${matched[14].value}`,
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const withdrawLiquidityRuleSetTypeB: LogFindersRuleSet = {
+  const withdrawLiquidityRuleSetTypeB: LogFindersActionRuleSet = {
     rule: rules.withdrawLiquidityRuleTypeB,
     transform: (fragment, matched) => ({
       msgType: "token/withdraw-liquidity",
       canonicalMsg: [
         `Withdraw ${matched[8].value} Liquidity from ${matched[5].value}`,
-        `Burn ${matched[12].value}${matched[9].value}`,
+        `Burn ${matched[12].value}${matched[9].value}`
       ],
-      amountIn: `${matched[8].value}`,
-      amountOut: `${matched[12].value}${matched[9].value}`,
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const transferRuleSet: LogFindersRuleSet = {
+  const transferRuleSet: LogFindersActionRuleSet = {
     rule: rules.transferRule,
     transform: (fragment, matched) => ({
       msgType: "token/transfer",
       canonicalMsg: [
-        `Transfer ${matched[4].value}${matched[0].value} to ${matched[3].value}`,
+        `Transfer ${matched[4].value}${matched[0].value} to ${matched[3].value}`
       ],
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
   return [
     provideLiquidityRuleSet,
     withdrawLiquidityRuleSetTypeA,
     withdrawLiquidityRuleSetTypeB,
-    transferRuleSet,
-  ]
-}
+    transferRuleSet
+  ];
+};
 
-export default create
+export default create;

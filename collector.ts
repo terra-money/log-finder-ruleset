@@ -1,24 +1,23 @@
-import { LogFinderResult } from "./types"
+import { LogFinderActionResult } from "./types";
 
-export const collector = (result: LogFinderResult[]) => {
-  const returnArray: LogFinderResult[] = []
-  result.forEach((value) => {
+export const collector = (result: LogFinderActionResult[]) => {
+  const returnArray: LogFinderActionResult[] = [];
+  result.forEach(value => {
     if (value.transformed) {
-      const action = value.transformed.msgType.split("/")[1]
+      const action = value.transformed?.msgType?.split("/")[1];
+      const types = [
+        "transfer",
+        "send",
+        "delegate",
+        "undelegate",
+        "begin-redelegate"
+      ];
 
-      if (
-        ![
-          "transfer",
-          "send",
-          "delegate",
-          "undelegate",
-          "begin-redelegate",
-        ].includes(action)
-      ) {
-        returnArray.push(value)
+      if (!types.includes(action)) {
+        returnArray.push(value);
       }
     }
-  })
+  });
 
-  return returnArray.length > 0 ? returnArray : result
-}
+  return returnArray.length > 0 ? returnArray : result;
+};

@@ -1,9 +1,9 @@
-import { PylonAddresses } from "./addresses"
+import { PylonAddresses } from "./addresses";
 
 export const createPylonRules = ({
   stakingAddress,
   govAddress,
-  airdropAddress,
+  airdropAddress
 }: PylonAddresses) => ({
   stakeLPRule: {
     type: "from_contract",
@@ -16,8 +16,8 @@ export const createPylonRules = ({
       ["contract_address", stakingAddress],
       ["action", "bond"],
       ["owner"],
-      ["amount"],
-    ],
+      ["amount"]
+    ]
   },
   unstakeLPRule: {
     type: "from_contract",
@@ -30,8 +30,8 @@ export const createPylonRules = ({
       ["action", "transfer"],
       ["from", stakingAddress],
       ["to"],
-      ["amount"],
-    ],
+      ["amount"]
+    ]
   },
   lpStakingRewardRule: {
     type: "from_contract",
@@ -43,8 +43,8 @@ export const createPylonRules = ({
       ["action", "transfer"],
       ["from", stakingAddress],
       ["to"],
-      ["amount"],
-    ],
+      ["amount"]
+    ]
   },
   govStakeRule: {
     type: "from_contract",
@@ -58,8 +58,8 @@ export const createPylonRules = ({
       ["action", "staking"],
       ["sender"],
       ["share"],
-      ["amount"],
-    ],
+      ["amount"]
+    ]
   },
   govUnstakeRule: {
     type: "from_contract",
@@ -72,8 +72,8 @@ export const createPylonRules = ({
       ["action"],
       ["from"],
       ["to"],
-      ["amount"],
-    ],
+      ["amount"]
+    ]
   },
   airdropRule: {
     type: "from_contract",
@@ -87,7 +87,7 @@ export const createPylonRules = ({
       ["action"],
       ["from"],
       ["to"],
-      ["amount"],
-    ],
-  },
-})
+      ["amount"]
+    ]
+  }
+});

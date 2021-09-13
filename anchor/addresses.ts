@@ -31,7 +31,7 @@ export const mainnet: AnchorAddresses = {
   airdropAddress: "terra146ahqn6d3qgdvmj8cj96hh03dzmeedhsf0kxqm",
   bETHAddress: "terra1dzhzukyezv0etz22ud940z7adyv7xgcjkahuun",
   bETHRwardAddress: "terra1939tzfn4hn960ychpcsjshu8jds3zdwlp8jed9",
-  bETHCustodyAddress: "terra10cxuzggyvvv44magvrh3thpdnk9cmlgk93gmx2",
+  bETHCustodyAddress: "terra10cxuzggyvvv44magvrh3thpdnk9cmlgk93gmx2"
 }
 
 export const testnet: AnchorAddresses = {
@@ -49,5 +49,5 @@ export const testnet: AnchorAddresses = {
   airdropAddress: "terra1u5ywhlve3wugzqslqvm8ks2j0nsvrqjx0mgxpk",
   bETHAddress: "terra19mkj9nec6e3y5754tlnuz4vem7lzh4n0lc2s3l",
   bETHRwardAddress: "terra1ja3snkedk4t0zp7z3ljd064hcln8dsv5x004na",
-  bETHCustodyAddress: "terra1j6fey5tl70k9fvrv7mea7ahfr8u2yv7l23w5e6",
+  bETHCustodyAddress: "terra1j6fey5tl70k9fvrv7mea7ahfr8u2yv7l23w5e6"
 }

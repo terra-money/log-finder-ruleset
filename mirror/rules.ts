@@ -6,7 +6,7 @@ export const createMirrorRules = ({
   govAddress,
   airdropAddress,
   limitOrderAddress,
-  MIRAddress,
+  MIRAddress
 }: MirrorAddresses) => ({
   openPosition: {
     type: "from_contract",
@@ -18,8 +18,8 @@ export const createMirrorRules = ({
       ["collateral_amount"],
       ["action"],
       ["to"],
-      ["amount"],
-    ],
+      ["amount"]
+    ]
   },
   depositRule: {
     type: "from_contract",
@@ -27,8 +27,8 @@ export const createMirrorRules = ({
       ["contract_address", mintAddress],
       ["action", "deposit"],
       ["position_idx"],
-      ["deposit_amount"],
-    ],
+      ["deposit_amount"]
+    ]
   },
   withdrawRule: {
     type: "from_contract",
@@ -38,8 +38,8 @@ export const createMirrorRules = ({
       ["position_idx"],
       ["withdraw_amount"],
       ["tax_amount"],
-      ["protocol_fee"],
-    ],
+      ["protocol_fee"]
+    ]
   },
   burnRule: {
     type: "from_contract",
@@ -56,8 +56,8 @@ export const createMirrorRules = ({
       ["contract_address"],
       ["action", "burn"],
       ["from"],
-      ["amount"],
-    ],
+      ["amount"]
+    ]
   },
   stakeLPRule: {
     type: "from_contract",
@@ -70,8 +70,8 @@ export const createMirrorRules = ({
       ["contract_address", stakingAddress],
       ["action", "bond"],
       ["asset_token"],
-      ["amount"],
-    ],
+      ["amount"]
+    ]
   },
   unstakeLPRule: {
     type: "from_contract",
@@ -84,8 +84,8 @@ export const createMirrorRules = ({
       ["action", "transfer"],
       ["from", stakingAddress],
       ["to"],
-      ["amount"],
-    ],
+      ["amount"]
+    ]
   },
   lpStakingRewardRule: {
     type: "from_contract",
@@ -97,8 +97,8 @@ export const createMirrorRules = ({
       ["action", "transfer"],
       ["from", stakingAddress],
       ["to"],
-      ["amount"],
-    ],
+      ["amount"]
+    ]
   },
   govStakeRule: {
     type: "from_contract",
@@ -112,8 +112,8 @@ export const createMirrorRules = ({
       ["action", "staking"],
       ["sender"],
       ["share"],
-      ["amount"],
-    ],
+      ["amount"]
+    ]
   },
   govUnstakeRule: {
     type: "from_contract",
@@ -126,8 +126,8 @@ export const createMirrorRules = ({
       ["action"],
       ["from"],
       ["to"],
-      ["amount"],
-    ],
+      ["amount"]
+    ]
   },
   createPollRule: {
     type: "from_contract",
@@ -141,8 +141,8 @@ export const createMirrorRules = ({
       ["action", "create_poll"],
       ["creator"],
       ["poll_id"],
-      ["end_height"],
-    ],
+      ["end_height"]
+    ]
   },
   castVoteRule: {
     type: "from_contract",
@@ -152,8 +152,8 @@ export const createMirrorRules = ({
       ["poll_id"],
       ["amount"],
       ["voter"],
-      ["vote_option"],
-    ],
+      ["vote_option"]
+    ]
   },
   airdropRule: {
     type: "from_contract",
@@ -167,8 +167,8 @@ export const createMirrorRules = ({
       ["action"],
       ["from"],
       ["to"],
-      ["amount"],
-    ],
+      ["amount"]
+    ]
   },
   buySubmitOrderRule: {
     type: "from_contract",
@@ -178,8 +178,8 @@ export const createMirrorRules = ({
       ["order_id"],
       ["bidder_addr"],
       ["offer_asset", (value: string) => !value.includes("terra1")],
-      ["ask_asset"],
-    ],
+      ["ask_asset"]
+    ]
   },
   sellSubmitOrderRule: {
     type: "from_contract",
@@ -194,8 +194,8 @@ export const createMirrorRules = ({
       ["order_id"],
       ["bidder_addr"],
       ["offer_asset", (value: string) => value.includes("terra1")],
-      ["ask_asset"],
-    ],
+      ["ask_asset"]
+    ]
   },
   cancelOrderRule: {
     type: "from_contract",
@@ -203,8 +203,8 @@ export const createMirrorRules = ({
       ["contract_address", limitOrderAddress],
       ["action", "cancel_order"],
       ["order_id"],
-      ["bidder_refund"],
-    ],
+      ["bidder_refund"]
+    ]
   },
   buyExecuteOrderRule: {
     type: "from_contract",
@@ -223,8 +223,8 @@ export const createMirrorRules = ({
       ["action"],
       ["from"],
       ["to"],
-      ["amount"],
-    ],
+      ["amount"]
+    ]
   },
 
   sellExecuteOrderRule: {
@@ -239,8 +239,8 @@ export const createMirrorRules = ({
       ["action"],
       ["from"],
       ["to"],
-      ["amount"],
-    ],
+      ["amount"]
+    ]
   },
   transferRule: {
     type: "from_contract",
@@ -249,8 +249,8 @@ export const createMirrorRules = ({
       ["action", "transfer"],
       ["from"],
       ["to"],
-      ["amount"],
-    ],
+      ["amount"]
+    ]
   },
   longFarm: {
     type: "from_contract",
@@ -259,8 +259,8 @@ export const createMirrorRules = ({
       ["action", "bond"],
       ["staker_addr"],
       ["asset_token"],
-      ["amount"],
-    ],
+      ["amount"]
+    ]
   },
   borrow: {
     type: "from_contract",
@@ -274,8 +274,8 @@ export const createMirrorRules = ({
       ["contract_address"],
       ["action", "mint"],
       ["to"],
-      ["amount"],
-    ],
+      ["amount"]
+    ]
   },
   unlockAmount: {
     type: "from_contract",
@@ -283,7 +283,7 @@ export const createMirrorRules = ({
       ["contract_address"],
       ["action", "unlock_shorting_funds"],
       ["unlocked_amount"],
-      ["tax_amount"],
-    ],
-  },
+      ["tax_amount"]
+    ]
+  }
 })

@@ -15,7 +15,7 @@ export const createAnchorRules = ({
   airdropAddress,
   bETHAddress,
   bETHCustodyAddress,
-  bETHRwardAddress,
+  bETHRwardAddress
 }: AnchorAddresses) => ({
   depositStableRule: {
     type: "from_contract",
@@ -28,8 +28,8 @@ export const createAnchorRules = ({
       ["contract_address"],
       ["action"],
       ["to"],
-      ["amount"],
-    ],
+      ["amount"]
+    ]
   },
   redeemStableRule: {
     type: "from_contract",
@@ -46,8 +46,8 @@ export const createAnchorRules = ({
       ["contract_address", aUSTAddress],
       ["action", "burn"],
       ["from", marketAddress],
-      ["amount"],
-    ],
+      ["amount"]
+    ]
   },
   bondLunaRule: {
     type: "from_contract",
@@ -64,15 +64,15 @@ export const createAnchorRules = ({
       ["contract_address"],
       ["action"],
       ["holder_address"],
-      ["amount"],
-    ],
+      ["amount"]
+    ]
   },
   unbondLunaRule: {
     type: "from_contract",
     attributes: [
       [
         "contract_address",
-        (address: string) => [bLunaAddress, bETHAddress].includes(address),
+        (address: string) => [bLunaAddress, bETHAddress].includes(address)
       ],
       ["action"],
       ["from"],
@@ -98,8 +98,8 @@ export const createAnchorRules = ({
       ["contract_address"],
       ["action"],
       ["holder_address"],
-      ["amount"],
-    ],
+      ["amount"]
+    ]
   },
   withdrawUnbondedRule: {
     type: "from_contract",
@@ -107,8 +107,8 @@ export const createAnchorRules = ({
       ["contract_address", bLunaHubAddress],
       ["action", "finish_burn"],
       ["from", bLunaHubAddress],
-      ["amount"],
-    ],
+      ["amount"]
+    ]
   },
   claimRewardRule: {
     type: "from_contract",
@@ -116,26 +116,26 @@ export const createAnchorRules = ({
       [
         "contract_address",
         (address: string) =>
-          [bLunaRwardAddress, bETHRwardAddress].includes(address),
+          [bLunaRwardAddress, bETHRwardAddress].includes(address)
       ],
       ["action", "claim_reward"],
       ["holder_address"],
-      ["rewards"],
-    ],
+      ["rewards"]
+    ]
   },
   depositCollateralRule: {
     type: "from_contract",
     attributes: [
       [
         "contract_address",
-        (address: string) => [bLunaAddress, bETHAddress].includes(address),
+        (address: string) => [bLunaAddress, bETHAddress].includes(address)
       ],
       ["action", "send"],
       ["from"],
       [
         "to",
         (address: string) =>
-          [bLunaCustodyAddress, bETHCustodyAddress].includes(address),
+          [bLunaCustodyAddress, bETHCustodyAddress].includes(address)
       ],
       ["amount"],
       ["contract_address"],
@@ -149,12 +149,12 @@ export const createAnchorRules = ({
       [
         "contract_address",
         (address: string) =>
-          [bLunaCustodyAddress, bETHCustodyAddress].includes(address),
+          [bLunaCustodyAddress, bETHCustodyAddress].includes(address)
       ],
       ["action", "deposit_collateral"],
       ["borrower"],
-      ["amount"],
-    ],
+      ["amount"]
+    ]
   },
   lockCollateralRule: {
     type: "from_contract",
@@ -166,12 +166,12 @@ export const createAnchorRules = ({
       [
         "contract_address",
         (address: string) =>
-          [bLunaCustodyAddress, bETHCustodyAddress].includes(address),
+          [bLunaCustodyAddress, bETHCustodyAddress].includes(address)
       ],
       ["action"],
       ["borrower"],
-      ["amount"],
-    ],
+      ["amount"]
+    ]
   },
   unlockCollateralRule: {
     type: "from_contract",
@@ -183,12 +183,12 @@ export const createAnchorRules = ({
       [
         "contract_address",
         (address: string) =>
-          [bLunaCustodyAddress, bETHCustodyAddress].includes(address),
+          [bLunaCustodyAddress, bETHCustodyAddress].includes(address)
       ],
       ["action"],
       ["borrower"],
-      ["amount"],
-    ],
+      ["amount"]
+    ]
   },
   withdrawCollateralRule: {
     type: "from_contract",
@@ -196,7 +196,7 @@ export const createAnchorRules = ({
       [
         "contract_address",
         (address: string) =>
-          [bLunaCustodyAddress, bETHCustodyAddress].includes(address),
+          [bLunaCustodyAddress, bETHCustodyAddress].includes(address)
       ],
       ["action", "withdraw_collateral"],
       ["borrower"],
@@ -213,8 +213,8 @@ export const createAnchorRules = ({
       ["contract_address"],
       ["action"],
       ["holder_address"],
-      ["amount"],
-    ],
+      ["amount"]
+    ]
   },
   borrowStableRule: {
     type: "from_contract",
@@ -222,8 +222,8 @@ export const createAnchorRules = ({
       ["contract_address", marketAddress],
       ["action", "borrow_stable"],
       ["borrower"],
-      ["borrow_amount"],
-    ],
+      ["borrow_amount"]
+    ]
   },
   repayStableRule: {
     type: "from_contract",
@@ -231,8 +231,8 @@ export const createAnchorRules = ({
       ["contract_address", marketAddress],
       ["action", "repay_stable"],
       ["borrower"],
-      ["repay_amount"],
-    ],
+      ["repay_amount"]
+    ]
   },
   ustSwapRule: {
     type: "from_contract",
@@ -250,8 +250,8 @@ export const createAnchorRules = ({
       ["return_amount"],
       ["tax_amount"],
       ["spread_amount"],
-      ["commission_amount"],
-    ],
+      ["commission_amount"]
+    ]
   },
   stakeLPRule: {
     type: "from_contract",
@@ -264,8 +264,8 @@ export const createAnchorRules = ({
       ["contract_address", LPStakingAddress],
       ["action", "bond"],
       ["owner"],
-      ["amount"],
-    ],
+      ["amount"]
+    ]
   },
   unstakeLPRule: {
     type: "from_contract",
@@ -278,8 +278,8 @@ export const createAnchorRules = ({
       ["action"],
       ["from"],
       ["to"],
-      ["amount"],
-    ],
+      ["amount"]
+    ]
   },
   airdropRule: {
     type: "from_contract",
@@ -293,8 +293,8 @@ export const createAnchorRules = ({
       ["action"],
       ["from"],
       ["to"],
-      ["amount"],
-    ],
+      ["amount"]
+    ]
   },
   lpStakingRewardRule: {
     type: "from_contract",
@@ -307,8 +307,8 @@ export const createAnchorRules = ({
       ["action"],
       ["from"],
       ["to"],
-      ["amount"],
-    ],
+      ["amount"]
+    ]
   },
   borrowRewardsRule: {
     type: "from_contract",
@@ -324,8 +324,8 @@ export const createAnchorRules = ({
       ["action"],
       ["from"],
       ["to"],
-      ["amount"],
-    ],
+      ["amount"]
+    ]
   },
   govStakeRule: {
     type: "from_contract",
@@ -339,8 +339,8 @@ export const createAnchorRules = ({
       ["action", "staking"],
       ["sender"],
       ["share"],
-      ["amount"],
-    ],
+      ["amount"]
+    ]
   },
   govUnstakeRule: {
     type: "from_contract",
@@ -353,8 +353,8 @@ export const createAnchorRules = ({
       ["action"],
       ["from"],
       ["to"],
-      ["amount"],
-    ],
+      ["amount"]
+    ]
   },
   createPollRule: {
     type: "from_contract",
@@ -368,8 +368,8 @@ export const createAnchorRules = ({
       ["action", "create_poll"],
       ["creator"],
       ["poll_id"],
-      ["end_height"],
-    ],
+      ["end_height"]
+    ]
   },
   castVoteRule: {
     type: "from_contract",
@@ -379,8 +379,8 @@ export const createAnchorRules = ({
       ["poll_id"],
       ["amount"],
       ["voter"],
-      ["vote_option"],
-    ],
+      ["vote_option"]
+    ]
   },
   bETHmintRule: {
     type: "from_contract",
@@ -392,7 +392,20 @@ export const createAnchorRules = ({
       ["contract_address", bETHRwardAddress],
       ["action", "increase_balance"],
       ["holder_address"],
-      ["amount"],
-    ],
+      ["amount"]
+    ]
   },
+  bETHburnRule: {
+    type: "from_contract",
+    attributes: [
+      ["contract_address", bETHAddress],
+      ["action", "burn"],
+      ["from"],
+      ["amount"],
+      ["contract_address", bETHRwardAddress],
+      ["action", "decrease_balance"],
+      ["holder_address"],
+      ["amount"]
+    ]
+  }
 })

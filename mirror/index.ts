@@ -1,233 +1,209 @@
-import { LogFindersRuleSet } from "../types"
-import { createMirrorRules } from "./rules"
-import { mainnet, testnet } from "./addresses"
+import { LogFindersActionRuleSet } from "../types";
+import { createMirrorRules } from "./rules";
+import { mainnet, testnet } from "./addresses";
 
 const create = (network: string) => {
-  const addresses = network === "mainnet" ? mainnet : testnet
-  const rules = createMirrorRules(addresses)
+  const addresses = network === "mainnet" ? mainnet : testnet;
+  const rules = createMirrorRules(addresses);
 
-  const openPositionRuleSet: LogFindersRuleSet = {
+  const openPositionRuleSet: LogFindersActionRuleSet = {
     rule: rules.openPosition,
     transform: (fragment, matched) => ({
       msgType: "mirror/open-position",
       canonicalMsg: [
         `Deposit ${matched[4].value} (Position ID: ${matched[0]})`,
-        `Mint ${matched[3].value}`,
+        `Mint ${matched[3].value}`
       ],
-      amountIn: `${matched[3].value}`,
-      amountOut: `${matched[4].value}`,
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const depositRuleSet: LogFindersRuleSet = {
+  const depositRuleSet: LogFindersActionRuleSet = {
     rule: rules.depositRule,
     transform: (fragment, matched) => ({
       msgType: "mirror/deposit",
       canonicalMsg: [
-        `Deposit ${matched[3].value} (Position ID: ${matched[2].value})`,
+        `Deposit ${matched[3].value} (Position ID: ${matched[2].value})`
       ],
-      amountOut: `${matched[3].value}`,
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const withdrawRuleSet: LogFindersRuleSet = {
+  const withdrawRuleSet: LogFindersActionRuleSet = {
     rule: rules.withdrawRule,
     transform: (fragment, matched) => ({
       msgType: "mirror/withdraw",
       canonicalMsg: [
-        `Withdraw ${matched[3].value} (Position ID: ${matched[2].value})`,
+        `Withdraw ${matched[3].value} (Position ID: ${matched[2].value})`
       ],
-      amountIn: `${matched[3].value}`,
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const burnRuleSet: LogFindersRuleSet = {
+  const burnRuleSet: LogFindersActionRuleSet = {
     rule: rules.burnRule,
     transform: (fragment, matched) => ({
       msgType: "mirror/burn",
       canonicalMsg: [
-        `Burn ${matched[8].value} (Position ID: ${matched[7].value})`,
+        `Burn ${matched[8].value} (Position ID: ${matched[7].value})`
       ],
-      amountOut: `${matched[8].value}`,
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const stakeLPRuleSet: LogFindersRuleSet = {
+  const stakeLPRuleSet: LogFindersActionRuleSet = {
     rule: rules.stakeLPRule,
     transform: (fragment, matched) => ({
       msgType: "mirror/stake-LP",
       canonicalMsg: [`Stake ${matched[8].value}${matched[0].value}`],
-      amountOut: `${matched[8].value}${matched[0].value}`,
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const unstakeLPRuleSet: LogFindersRuleSet = {
+  const unstakeLPRuleSet: LogFindersActionRuleSet = {
     rule: rules.unstakeLPRule,
     transform: (fragment, matched) => ({
       msgType: "mirror/unstake-LP",
       canonicalMsg: [`Unstake ${matched[8].value}${matched[4].value}`],
-      amountIn: `${matched[8].value}${matched[4].value}`,
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const lpStakingRewardRuleSet: LogFindersRuleSet = {
+  const lpStakingRewardRuleSet: LogFindersActionRuleSet = {
     rule: rules.lpStakingRewardRule,
     transform: (fragment, matched) => ({
       msgType: "mirror/LP-staking-reward",
       canonicalMsg: [`Claim Reward ${matched[7].value}${matched[3].value}`],
-      amountIn: `${matched[7].value}${matched[3].value}`,
-      target: matched[6].value,
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const govStakeRuleSet: LogFindersRuleSet = {
+  const govStakeRuleSet: LogFindersActionRuleSet = {
     rule: rules.govStakeRule,
     transform: (fragment, matched) => ({
       msgType: "mirror/governance-stake",
       canonicalMsg: [
-        `Stake ${matched[4].value}${matched[0].value} to ${matched[5].value}`,
+        `Stake ${matched[4].value}${matched[0].value} to ${matched[5].value}`
       ],
-      amountOut: `${matched[4].value}${matched[0].value}`,
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const govUnstakeRuleSet: LogFindersRuleSet = {
+  const govUnstakeRuleSet: LogFindersActionRuleSet = {
     rule: rules.govUnstakeRule,
     transform: (fragment, matched) => ({
       msgType: "mirror/governance-unstake",
       canonicalMsg: [
-        `Unstake ${matched[3].value}${matched[4].value} to ${matched[0].value}`,
+        `Unstake ${matched[3].value}${matched[4].value} to ${matched[0].value}`
       ],
-      amountIn: `${matched[3].value}${matched[4].value}`,
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const createPollRuleSet: LogFindersRuleSet = {
+  const createPollRuleSet: LogFindersActionRuleSet = {
     rule: rules.createPollRule,
     transform: (fragment, matched) => ({
       msgType: "mirror/create-poll",
       canonicalMsg: [`Create Poll (Poll ID: ${matched[8].value})`],
-      amountOut: `${matched[4].value}`,
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const castVoteRuleSet: LogFindersRuleSet = {
+  const castVoteRuleSet: LogFindersActionRuleSet = {
     rule: rules.castVoteRule,
     transform: (fragment, matched) => ({
       msgType: "mirror/cast-vote",
       canonicalMsg: [
-        `Vote to Poll (Poll ID: ${matched[2].value}) (${matched[5].value})`,
+        `Vote to Poll (Poll ID: ${matched[2].value}) (${matched[5].value})`
       ],
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const airdropRuleSet: LogFindersRuleSet = {
+  const airdropRuleSet: LogFindersActionRuleSet = {
     rule: rules.airdropRule,
     transform: (fragment, matched) => ({
       msgType: "mirror/airdrop",
       canonicalMsg: [`Claim ${matched[4].value}${matched[5].value}`],
-      amountIn: `${matched[4].value}${matched[5].value}`,
-      target: matched[3].value,
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const buySubmitOrderRuleSet: LogFindersRuleSet = {
+  const buySubmitOrderRuleSet: LogFindersActionRuleSet = {
     rule: rules.buySubmitOrderRule,
     transform: (fragment, matched) => ({
       msgType: "mirror/submit-order-buy",
       canonicalMsg: [
-        `Order to buy ${matched[5].value} with ${matched[4].value}`,
+        `Order to buy ${matched[5].value} with ${matched[4].value}`
       ],
-      amountOut: `${matched[4].value}`,
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const sellSubmitOrderRuleSet: LogFindersRuleSet = {
+  const sellSubmitOrderRuleSet: LogFindersActionRuleSet = {
     rule: rules.sellSubmitOrderRule,
     transform: (fragment, matched) => ({
       msgType: "mirror/submit-order-sell",
       canonicalMsg: [
-        `Order to sell ${matched[9].value} for ${matched[10].value}`,
+        `Order to sell ${matched[9].value} for ${matched[10].value}`
       ],
-      amountOut: `${matched[9].value}`,
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const cancelOrderRuleSet: LogFindersRuleSet = {
+  const cancelOrderRuleSet: LogFindersActionRuleSet = {
     rule: rules.cancelOrderRule,
     transform: (fragment, matched) => ({
       msgType: "mirror/cancel-order",
       canonicalMsg: [`Canceled limit order ID:${matched[2].value}`],
-      amountIn: `${matched[3].value}`,
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const buyExecuteOrderRuleSet: LogFindersRuleSet = {
+  const buyExecuteOrderRuleSet: LogFindersActionRuleSet = {
     rule: rules.buyExecuteOrderRule,
     transform: (fragment, matched) => ({
       msgType: "mirror/execute-order-buy",
       canonicalMsg: [`Bought ${matched[9].value} with ${matched[8].value}`],
-      amountIn: `${matched[9].value}`,
-      amountOut: `${matched[8].value}`,
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const sellExecuteOrderRuleSet: LogFindersRuleSet = {
+  const sellExecuteOrderRuleSet: LogFindersActionRuleSet = {
     rule: rules.sellExecuteOrderRule,
     transform: (fragment, matched) => ({
       msgType: "mirror/execute-order-sell",
       canonicalMsg: [`Sold ${matched[3].value} for ${matched[4].value}`],
-      amountIn: `${matched[4].value}`,
-      amountOut: `${matched[3].value}`,
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const lpStakeRuleSet: LogFindersRuleSet = {
+  const lpStakeRuleSet: LogFindersActionRuleSet = {
     rule: rules.longFarm,
     transform: (fragment, matched) => ({
       msgType: "mirror/LP-stake",
       canonicalMsg: [`Stake LP to ${matched[0].value}`],
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const borrowRuleSet: LogFindersRuleSet = {
+  const borrowRuleSet: LogFindersActionRuleSet = {
     rule: rules.borrow,
     transform: (fragment, matched) => ({
       msgType: "mirror/borrow",
       canonicalMsg: [`Mint ${matched[3].value} with ${matched[4].value}`],
-      amountIn: `${matched[3].value}`,
-      amountOut: `${matched[4].value}`,
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
-  const unlockAmountRuleSet: LogFindersRuleSet = {
+  const unlockAmountRuleSet: LogFindersActionRuleSet = {
     rule: rules.unlockAmount,
     transform: (fragment, matched) => ({
       msgType: "mirror/unlock-amount",
       canonicalMsg: [`Unlock ${matched[2].value}`],
-      amountIn: `${matched[2].value}`,
-      payload: fragment,
-    }),
-  }
+      payload: fragment
+    })
+  };
 
   return [
     openPositionRuleSet,
@@ -249,8 +225,8 @@ const create = (network: string) => {
     sellExecuteOrderRuleSet,
     lpStakeRuleSet,
     borrowRuleSet,
-    unlockAmountRuleSet,
-  ]
-}
+    unlockAmountRuleSet
+  ];
+};
 
-export default create
+export default create;
