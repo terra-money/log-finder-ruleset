@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@terra-money/log-finder": "^1.1.6",
+    "@terra-money/terra.js": "^2.0.5"
+  }
+}
