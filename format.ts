@@ -25,9 +25,9 @@ export const getTxCanonicalMsgs = (
         return matchedPerLog
       })
 
-      const logMatched = matched.map((match) => collector(match))
+      const logMatched = matched.map((match) => collector(match, tx))
 
-      return logMatched.length > 0 ? logMatched : undefined
+      return logMatched.flat().length > 0 ? logMatched : undefined
     }
   } catch {
     return undefined
@@ -41,7 +41,6 @@ export const getTxAmounts = (
 ): LogFinderAmountResult[][] | undefined => {
   try {
     const tx: TxInfo.Data = JSON.parse(data)
-
     if (tx.logs) {
       const msgTypes = tx.tx.value.msg
       const { timestamp, txhash } = tx
@@ -59,7 +58,7 @@ export const getTxAmounts = (
         return matchedPerLog
       })
 
-      return matched.length > 0 ? matched : undefined
+      return matched.flat().length > 0 ? matched : undefined
     }
   } catch {
     return undefined
