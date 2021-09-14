@@ -1,79 +1,114 @@
 import { TxInfo, Event } from "@terra-money/terra.js"
-import { collector } from "./collector"
-import { LogFinderResult, TransformResult } from "./types"
 import { ReturningLogFinderResult } from "@terra-money/log-finder"
+import { collector, defaultAction } from "./collector"
+import {
+  LogFinderActionResult,
+  LogFinderAmountResult,
+  Amount,
+  Action,
+} from "./types"
 
-export const getMatchMsg = (
+export const getTxCanonicalMsgs = (
   data: string,
-  logMatcher: (
-    events: Event[]
-  ) => ReturningLogFinderResult<TransformResult>[][],
-  address?: string
-) => {
+  logMatcher: (events: Event[]) => ReturningLogFinderResult<Action>[][]
+): LogFinderActionResult[][] | undefined => {
   try {
-    const tx: TxInfo = JSON.parse(data)
+    const tx: TxInfo.Data = JSON.parse(data)
 
     if (tx.logs) {
-      const matched: LogFinderResult[][] = tx.logs.map((log) => {
+      const matched: LogFinderActionResult[][] = tx.logs.map((log) => {
         const matchLog = logMatcher(log.events)
-        const matchedPerLog = matchLog
+        const matchedPerLog: LogFinderActionResult[] = matchLog
           ?.flat()
           .filter(Boolean)
-          .map((data) => {
-            if (data.transformed && address) {
-              const { match, transformed } = data
-              const type = transformed.msgType
-              if (["terra/send", "token/transfer"].includes(type)) {
-                const result = getTransformed(address, match, transformed)
-                return {
-                  ...data,
-                  transformed: result,
-                  timestamp: tx.timestamp,
-                }
-              }
-            }
-            return { ...data, timestamp: tx.timestamp }
-          })
-
+          .map((data) => ({ ...data, timestamp: tx.timestamp }))
         return matchedPerLog
       })
 
-      const logMatched = matched.map((match) => collector(match))
-      return logMatched.length > 0 ? logMatched : undefined
+      const logMatched = matched.map((match) => collector(match, tx))
+
+      if (!(logMatched.flat().length > 0)) {
+        const defaultCanonicalMsg = defaultAction(tx)
+
+        if (defaultCanonicalMsg) {
+          return [defaultCanonicalMsg]
+        }
+      }
+
+      return logMatched
     }
   } catch {
     return undefined
   }
 }
 
-type Match = {
-  key: string
-  value: string
+export const getTxAmounts = (
+  data: string,
+  logMatcher: (events: Event[]) => ReturningLogFinderResult<Amount>[][],
+  address: string
+): LogFinderAmountResult[][] | undefined => {
+  try {
+    const tx: TxInfo.Data = JSON.parse(data)
+    if (tx.logs) {
+      const msgTypes = tx.tx.value.msg
+      const { timestamp, txhash } = tx
+
+      const matched: LogFinderAmountResult[][] = tx.logs.map((log, index) => {
+        const matchLog = logMatcher(log.events)
+        const matchedPerLog: LogFinderAmountResult[] = matchLog
+          ?.flat()
+          .filter(Boolean)
+          .map((data) => {
+            const msgType = msgTypes[index].type.split("/")[1]
+            return formatLogs(data, msgType, address, timestamp, txhash)
+          })
+
+        return matchedPerLog
+      })
+
+      return matched.flat().length > 0 ? matched : undefined
+    }
+  } catch {
+    return undefined
+  }
 }
 
-const getTransformed = (
+const formatLogs = (
+  data: ReturningLogFinderResult<Amount>,
+  msgType: string,
   address: string,
-  match: Match[],
-  transformed: TransformResult
+  timestamp: string,
+  txhash: string
 ) => {
-  const type = transformed.msgType
-
-  if (type === "terra/send") {
-    if (![match[0].value, match[1].value].includes(address)) {
-      return undefined
+  if (data.transformed) {
+    const { transformed } = data
+    const { type, withdraw_date } = transformed
+    const logData = {
+      ...data,
+      timestamp: timestamp,
+      txhash: txhash,
+    }
+    if (type === "delegate" && msgType === "MsgDelegate") {
+      return {
+        ...logData,
+        transformed: { ...transformed, sender: address },
+      }
+    } else if (
+      type === "unDelegate" &&
+      msgType === "MsgUndelegate" &&
+      withdraw_date
+    ) {
+      const now = new Date()
+      const withdrawDate = new Date(withdraw_date)
+      return {
+        ...logData,
+        transformed: {
+          ...transformed,
+          recipient: now > withdrawDate ? address : "",
+        },
+      }
     }
   }
 
-  const sender = type === "terra/send" ? match[1].value : match[2].value
-
-  const amount =
-    type === "terra/send"
-      ? match[2].value
-      : `${match[4].value}${match[0].value}` //if msgType === token/transfer
-
-  sender === address
-    ? (transformed.amountOut = amount)
-    : (transformed.amountIn = amount)
-
-  return transformed
+  return { ...data, timestamp: timestamp, txhash: txhash }
 }

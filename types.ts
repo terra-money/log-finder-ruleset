@@ -4,21 +4,31 @@ import {
   LogFragment,
 } from "@terra-money/log-finder"
 
-export interface TransformResult {
+export interface Action {
   msgType: string
   canonicalMsg: string[]
   payload: LogFragment
-  amountIn?: string
-  amountOut?: string
-  target?: string
 }
 
-export interface LogFindersRuleSet {
+export interface Amount {
+  type: string
+  amount: string
+  sender?: string
+  recipient?: string
+  withdraw_date?: string
+}
+
+export interface LogFindersActionRuleSet {
   rule: LogFinderRule
-  transform: ReturningLogFinderTransformer<TransformResult>
+  transform: ReturningLogFinderTransformer<Action>
 }
 
-export interface LogFinderResult {
+export interface LogFindersAmountRuleSet {
+  rule: LogFinderRule
+  transform: ReturningLogFinderTransformer<Amount>
+}
+
+export interface LogFinderActionResult {
   timestamp: string
   fragment: LogFragment
   match: {
@@ -26,5 +36,18 @@ export interface LogFinderResult {
     value: string
   }[]
   height?: number
-  transformed?: TransformResult
+  transformed?: Action
+  txhash?: string
+}
+
+export interface LogFinderAmountResult {
+  timestamp: string
+  fragment: LogFragment
+  match: {
+    key: string
+    value: string
+  }[]
+  height?: number
+  transformed?: Amount
+  txhash?: string
 }
