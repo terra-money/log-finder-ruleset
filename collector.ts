@@ -43,7 +43,7 @@ export const defaultAction = (tx: TxInfo.Data) => {
           attributes: [],
         }
         const transformed: Action = {
-          msgType: "ExecuteMsg",
+          msgType: "cw20/execute",
           canonicalMsg: [`Execute ${key} on ${contract}`],
           payload: fragment,
         }
