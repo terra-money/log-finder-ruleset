@@ -6,7 +6,7 @@ export const collector = (result: LogFinderActionResult[], tx: TxInfo.Data) => {
   const returnArray: LogFinderActionResult[] = []
   result.forEach((value) => {
     if (value.transformed) {
-      const action = value.transformed?.msgType?.split("/")[1]
+      const action = value.transformed.msgType?.split("/")[1]
       const types = [
         "transfer",
         "send",
@@ -21,10 +21,10 @@ export const collector = (result: LogFinderActionResult[], tx: TxInfo.Data) => {
     }
   })
 
-  return returnArray.length > 0 ? returnArray : defaultAction(tx, result)
+  return returnArray.length > 0 ? returnArray : result
 }
 
-const defaultAction = (tx: TxInfo.Data, result: LogFinderActionResult[]) => {
+export const defaultAction = (tx: TxInfo.Data) => {
   try {
     const msgs = tx.tx.value.msg
 
@@ -57,8 +57,8 @@ const defaultAction = (tx: TxInfo.Data, result: LogFinderActionResult[]) => {
         action.push(result)
       }
     })
-    return action
+    return action.length > 0 ? action : undefined
   } catch {
-    return result
+    return undefined
   }
 }

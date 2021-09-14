@@ -1,6 +1,6 @@
 import { TxInfo, Event } from "@terra-money/terra.js"
 import { ReturningLogFinderResult } from "@terra-money/log-finder"
-import { collector } from "./collector"
+import { collector, defaultAction } from "./collector"
 import {
   LogFinderActionResult,
   LogFinderAmountResult,
@@ -27,7 +27,15 @@ export const getTxCanonicalMsgs = (
 
       const logMatched = matched.map((match) => collector(match, tx))
 
-      return logMatched.flat().length > 0 ? logMatched : undefined
+      if (!(logMatched.flat().length > 0)) {
+        const defaultCanonicalMsg = defaultAction(tx)
+
+        if (defaultCanonicalMsg) {
+          return [defaultCanonicalMsg]
+        }
+      }
+
+      return logMatched
     }
   } catch {
     return undefined

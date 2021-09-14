@@ -128,7 +128,11 @@ const create = () => {
     rule: rules.msgWithdrawDelegationRewardRule,
     transform: (fragment, matched) => ({
       msgType: "terra/withdraw-delegation-reward",
-      canonicalMsg: [`Withdraw ${matched[0].value} from ${matched[1].value}`],
+      canonicalMsg: [
+        matched[0].value
+          ? `Withdraw ${matched[0].value} from ${matched[1].value}`
+          : `Withdraw from ${matched[1].value}`,
+      ],
       payload: fragment,
     }),
   }
