@@ -33,10 +33,8 @@ export const defaultAction = (tx: TxInfo.Data) => {
       if (msg.type === "wasm/MsgExecuteContract") {
         const contract = msg.value.contract
         const executeMsg = JSON.stringify(msg.value.execute_msg)
-
-        const testValue = JSON.parse(decodeBase64(executeMsg))
-
-        const key = Object.keys(testValue)[0]
+        const decodeMsg = JSON.parse(decodeBase64(executeMsg))
+        const key = Object.keys(decodeMsg)[0]
 
         const fragment = {
           type: "Execute",

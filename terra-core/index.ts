@@ -110,6 +110,10 @@ const rules = {
     type: "transfer",
     attributes: [["recipient"], ["amount"]],
   },
+  msgGrantAuthorization: {
+    type: "grant_authorization",
+    attributes: [["grant_type"], ["granter"], ["grantee"]],
+  },
 }
 
 const create = () => {
@@ -322,6 +326,17 @@ const create = () => {
     }),
   }
 
+  const msgGrantAuthorizationRuleSet: LogFindersActionRuleSet = {
+    rule: rules.msgGrantAuthorization,
+    transform: (fragment, matched) => ({
+      msgType: "terra/grant-authorization",
+      canonicalMsg: [
+        `${matched[0].value} authorization granted to ${matched[2].value}`,
+      ],
+      payload: fragment,
+    }),
+  }
+
   return [
     msgSendRuleSet,
     msgWithdrawDelegationRewardRuleSet,
@@ -344,6 +359,7 @@ const create = () => {
     msgInstantiateContractRuleSet,
     msgSwapTerraSwapRuleSet,
     msgMultiSendRuleSet,
+    msgGrantAuthorizationRuleSet,
   ]
 }
 export default create
