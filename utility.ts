@@ -1,5 +1,6 @@
 import { ReturningLogFinderResult } from "@terra-money/log-finder"
 import { TxInfo } from "@terra-money/terra.js"
+import isBase64 from "is-base64"
 import { Action, Amount, LogFinderActionResult } from "./types"
 
 const decodeBase64 = (str: string) => {
@@ -10,34 +11,71 @@ const decodeBase64 = (str: string) => {
   }
 }
 
+const isBase64Extended = (value: string) =>
+  // we are only interested in json-alike base64's, which generally start with "ey" ('{')
+  value.startsWith("ey") &&
+  // other checks
+  isBase64(value)
+
+const reviver = (_: string, value: any) =>
+  typeof value === "string" && isBase64Extended(value)
+    ? JSON.parse(decodeBase64(value), reviver)
+    : value
+
+const decodeExecuteMsg = (str: string | object) => {
+  if (typeof str === "string" && isBase64Extended(str)) {
+    const decoded = decodeBase64(str)
+    try {
+      return JSON.stringify(JSON.parse(decoded, reviver), null, 2)
+    } catch {
+      return decoded
+    }
+  }
+  return JSON.stringify(str, undefined, 2)
+}
+
 export const defaultAction = (tx: TxInfo.Data) => {
   const msgs = tx.tx.value.msg
 
   const action: LogFinderActionResult[] = []
+  const fragment = {
+    type: "Unknown",
+    attributes: [],
+  }
+
+  const result: LogFinderActionResult = {
+    timestamp: tx.timestamp,
+    fragment,
+    match: [],
+  }
+
   msgs.forEach((msg) => {
-    const fragment = {
-      type: "Unknown",
-      attributes: [],
-    }
-
-    const result: LogFinderActionResult = {
-      timestamp: tx.timestamp,
-      fragment,
-      match: [],
-    }
-
     if (msg.type === "wasm/MsgExecuteContract") {
       const contract = msg.value.contract
       const executeMsg = JSON.stringify(msg.value.execute_msg)
-      const decodeMsg = JSON.parse(decodeBase64(executeMsg))
-      const key = Object.keys(decodeMsg)[0]
-      const transformed: Action = {
-        msgType: "cw20/execute",
-        canonicalMsg: [`Execute ${key} on ${contract}`],
-        payload: fragment,
-      }
 
-      action.push({ ...result, transformed })
+      // successful wasm decode
+      try {
+        const decodeMsg = JSON.parse(decodeExecuteMsg(executeMsg))
+        const key = Object.keys(decodeMsg)[0]
+        const transformed: Action = {
+          msgType: "wasm/execute",
+          canonicalMsg: [`Execute ${key || "default"} on ${contract}`],
+          payload: fragment,
+        }
+
+        action.push({ ...result, transformed })
+      } catch (e) {
+        // comes here, then it's unknown
+        action.push({
+          ...result,
+          transformed: {
+            msgType: "wasm/execute",
+            canonicalMsg: [`Execute default on ${contract}`],
+            payload: fragment,
+          },
+        })
+      }
     } else {
       const canonicalMsg = msg.type.split("/")[1]
       const transformed: Action = {
