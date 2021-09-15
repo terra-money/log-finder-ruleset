@@ -4,3 +4,9 @@ export {
   createLogMatcherForActions,
   createLogMatcherForAmounts,
 } from "./execute"
+export {
+  LogFinderActionResult,
+  LogFinderAmountResult,
+  LogFindersActionRuleSet,
+  LogFindersAmountRuleSet,
+} from "./types"
