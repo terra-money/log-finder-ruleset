@@ -29,7 +29,6 @@ export interface LogFindersAmountRuleSet {
 }
 
 export interface LogFinderActionResult {
-  timestamp: string
   fragment: LogFragment
   match: {
     key: string

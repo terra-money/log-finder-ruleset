@@ -44,7 +44,6 @@ export const defaultAction = (tx: TxInfo.Data) => {
   }
 
   const result: LogFinderActionResult = {
-    timestamp: tx.timestamp,
     fragment,
     match: [],
   }
@@ -77,10 +76,10 @@ export const defaultAction = (tx: TxInfo.Data) => {
         })
       }
     } else {
-      const canonicalMsg = msg.type.split("/")[1]
+      const msgTyps = msg.type.split("/")
       const transformed: Action = {
-        msgType: "unknown/terra",
-        canonicalMsg: [canonicalMsg],
+        msgType: `terra/${msgTyps[0]}`,
+        canonicalMsg: [msgTyps[1]],
         payload: fragment,
       }
 

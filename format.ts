@@ -12,11 +12,12 @@ import { defaultAction, formatLogs } from "./utility"
 export const getTxCanonicalMsgs = (
   data: string,
   logMatcher: (events: Event[]) => ReturningLogFinderResult<Action>[][]
-): LogFinderActionResult[][] | undefined => {
+): LogFinderActionResult[][] => {
   try {
     const tx: TxInfo.Data = JSON.parse(data)
+    const isSuccess = !tx.code
 
-    if (tx.logs) {
+    if (tx.logs && isSuccess) {
       const matched: LogFinderActionResult[][] = tx.logs.map((log) => {
         const matchLog = logMatcher(log.events)
         const matchedPerLog: LogFinderActionResult[] = matchLog
@@ -34,9 +35,34 @@ export const getTxCanonicalMsgs = (
       }
 
       return logMatched
+    } else {
+      //failed transaction or log is null (old network)
+      const msgs = tx.tx.value.msg
+      const msgTypes = msgs[0].type.split("/")
+      const fragment = {
+        type: `terra/${msgTypes[0]}`,
+        attributes: [],
+      }
+      const transformed: Action = {
+        msgType: `terra/${msgTypes[0]}`,
+        canonicalMsg: [msgTypes[1]],
+        payload: fragment,
+      }
+
+      return [[{ fragment, match: [], transformed }]]
     }
   } catch {
-    return undefined
+    const fragment = {
+      type: "Unknown",
+      attributes: [],
+    }
+    const transformed: Action = {
+      msgType: "unknown/terra",
+      canonicalMsg: ["Unknown tx"],
+      payload: fragment,
+    }
+
+    return [[{ fragment, match: [], transformed }]]
   }
 }
 
