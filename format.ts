@@ -1,21 +1,23 @@
 import { TxInfo, Event } from "@terra-money/terra.js"
 import { ReturningLogFinderResult } from "@terra-money/log-finder"
-import { collector, defaultAction } from "./collector"
+import { collector } from "./collector"
 import {
   LogFinderActionResult,
   LogFinderAmountResult,
   Amount,
   Action,
 } from "./types"
+import { defaultAction, formatLogs } from "./utility"
 
 export const getTxCanonicalMsgs = (
   data: string,
   logMatcher: (events: Event[]) => ReturningLogFinderResult<Action>[][]
-): LogFinderActionResult[][] | undefined => {
+): LogFinderActionResult[][] => {
   try {
     const tx: TxInfo.Data = JSON.parse(data)
+    const isSuccess = !tx.code
 
-    if (tx.logs) {
+    if (tx.logs && isSuccess) {
       const matched: LogFinderActionResult[][] = tx.logs.map((log) => {
         const matchLog = logMatcher(log.events)
         const matchedPerLog: LogFinderActionResult[] = matchLog
@@ -29,16 +31,38 @@ export const getTxCanonicalMsgs = (
 
       if (!(logMatched.flat().length > 0)) {
         const defaultCanonicalMsg = defaultAction(tx)
-
-        if (defaultCanonicalMsg) {
-          return [defaultCanonicalMsg]
-        }
+        return [defaultCanonicalMsg]
       }
 
       return logMatched
+    } else {
+      //failed transaction or log is null (old network)
+      const msgs = tx.tx.value.msg
+      const msgTypes = msgs[0].type.split("/")
+      const fragment = {
+        type: `terra/${msgTypes[0]}`,
+        attributes: [],
+      }
+      const transformed: Action = {
+        msgType: `terra/${msgTypes[0]}`,
+        canonicalMsg: [msgTypes[1]],
+        payload: fragment,
+      }
+
+      return [[{ fragment, match: [], transformed }]]
     }
   } catch {
-    return undefined
+    const fragment = {
+      type: "Unknown",
+      attributes: [],
+    }
+    const transformed: Action = {
+      msgType: "unknown/terra",
+      canonicalMsg: ["Unknown tx"],
+      payload: fragment,
+    }
+
+    return [[{ fragment, match: [], transformed }]]
   }
 }
 
@@ -71,44 +95,4 @@ export const getTxAmounts = (
   } catch {
     return undefined
   }
-}
-
-const formatLogs = (
-  data: ReturningLogFinderResult<Amount>,
-  msgType: string,
-  address: string,
-  timestamp: string,
-  txhash: string
-) => {
-  if (data.transformed) {
-    const { transformed } = data
-    const { type, withdraw_date } = transformed
-    const logData = {
-      ...data,
-      timestamp: timestamp,
-      txhash: txhash,
-    }
-    if (type === "delegate" && msgType === "MsgDelegate") {
-      return {
-        ...logData,
-        transformed: { ...transformed, sender: address },
-      }
-    } else if (
-      type === "unDelegate" &&
-      msgType === "MsgUndelegate" &&
-      withdraw_date
-    ) {
-      const now = new Date()
-      const withdrawDate = new Date(withdraw_date)
-      return {
-        ...logData,
-        transformed: {
-          ...transformed,
-          recipient: now > withdrawDate ? address : "",
-        },
-      }
-    }
-  }
-
-  return { ...data, timestamp: timestamp, txhash: txhash }
 }

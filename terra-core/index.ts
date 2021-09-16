@@ -331,7 +331,7 @@ const create = () => {
     transform: (fragment, matched) => ({
       msgType: "terra/grant-authorization",
       canonicalMsg: [
-        `${matched[0].value} authorization granted to ${matched[2].value}`,
+        `Authorization for ${matched[0].value} granted to ${matched[2].value}`,
       ],
       payload: fragment,
     }),
