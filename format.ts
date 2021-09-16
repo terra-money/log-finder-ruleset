@@ -40,12 +40,12 @@ export const getTxCanonicalMsgs = (
       const msgs = tx.tx.value.msg
       const msgTypes = msgs[0].type.split("/")
       const fragment = {
-        type: `terra/${msgTypes[0]}`,
+        type: `terra/${msgTypes[0] || "Unknown"}`,
         attributes: [],
       }
       const transformed: Action = {
-        msgType: `terra/${msgTypes[0]}`,
-        canonicalMsg: [msgTypes[1]],
+        msgType: `terra/${msgTypes[0] || "terra"}`,
+        canonicalMsg: [msgTypes[1] || "Unknown tx"],
         payload: fragment,
       }
 

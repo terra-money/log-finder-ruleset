@@ -78,8 +78,8 @@ export const defaultAction = (tx: TxInfo.Data) => {
     } else {
       const msgTyps = msg.type.split("/")
       const transformed: Action = {
-        msgType: `terra/${msgTyps[0]}`,
-        canonicalMsg: [msgTyps[1]],
+        msgType: `terra/${msgTyps[0] || "terra"}`,
+        canonicalMsg: [msgTyps[1] || "Unknown tx"],
         payload: fragment,
       }
 
