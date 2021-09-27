@@ -129,3 +129,6 @@ export const formatLogs = (
 
   return { ...data, timestamp: timestamp, txhash: txhash }
 }
+
+export const attachDenom = (string: string) =>
+  string.includes("uluna") ? `${string}` : `${string}uluna`

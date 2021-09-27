@@ -1,4 +1,5 @@
 import { LogFindersActionRuleSet } from "../types"
+import { attachDenom } from "../utility"
 
 const rules = {
   msgSendRule: {
@@ -116,6 +117,18 @@ const rules = {
   },
 }
 
+const showVoteOption = (string: string) => {
+  const voteOptions = ["Yes", "Abstain", "No", "NoWithVeto"]
+
+  try {
+    const vote = JSON.parse(string)
+    const option = parseInt(vote.option)
+    return voteOptions[option - 1]
+  } catch {
+    return string
+  }
+}
+
 const create = () => {
   const msgSendRuleSet: LogFindersActionRuleSet = {
     rule: rules.msgSendRule,
@@ -146,7 +159,9 @@ const create = () => {
     transform: (fragment, matched) => ({
       msgType: "terra/vote",
       canonicalMsg: [
-        `Vote ${matched[0].value} (Proposal ID: ${matched[1].value})`,
+        `Vote ${showVoteOption(matched[0].value)} (Proposal ID: ${
+          matched[1].value
+        })`,
       ],
       payload: fragment,
     }),
@@ -231,7 +246,7 @@ const create = () => {
     transform: (fragment, matched) => ({
       msgType: "terra/undelegate",
       canonicalMsg: [
-        `Undelegate ${matched[1].value}uluna to ${matched[0].value}`,
+        `Undelegate ${attachDenom(matched[1].value)} to ${matched[0].value}`,
       ],
       payload: fragment,
     }),
@@ -251,7 +266,7 @@ const create = () => {
     transform: (fragment, matched) => ({
       msgType: "terra/delegate",
       canonicalMsg: [
-        `Delegate ${matched[1].value}uluna to ${matched[0].value}`,
+        `Delegate ${attachDenom(matched[1].value)} to ${matched[0].value}`,
       ],
       payload: fragment,
     }),
@@ -271,7 +286,7 @@ const create = () => {
     transform: (fragment, matched) => ({
       msgType: "terra/begin-redelegate",
       canonicalMsg: [
-        `Redelegate ${matched[2].value}uluna to ${matched[1].value}`,
+        `Redelegate ${attachDenom(matched[2].value)} to ${matched[1].value}`,
       ],
       payload: fragment,
     }),
