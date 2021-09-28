@@ -1,6 +1,7 @@
 import { LogFindersActionRuleSet } from "../types"
 import { createAnchorRules } from "./rules"
 import { mainnet, testnet } from "./addresses"
+import { attachDenom } from "../utility"
 
 const create = (network: string) => {
   const addresses = network === "mainnet" ? mainnet : testnet
@@ -56,7 +57,7 @@ const create = (network: string) => {
     transform: (fragment, matched) => ({
       msgType: "anchor/withdraw-unbonded",
       canonicalMsg: [
-        `Withdraw ${matched[3].value}uluna from ${matched[0].value}`,
+        `Withdraw ${attachDenom(matched[3].value)} from ${matched[0].value}`,
       ],
       payload: fragment,
     }),

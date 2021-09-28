@@ -1,4 +1,5 @@
 import { LogFindersAmountRuleSet } from "../types"
+import { attachDenom } from "../utility"
 
 const rule = {
   nativeMultiSendRule: {
@@ -87,7 +88,7 @@ const create = () => {
     rule: rule.delegateRule,
     transform: (fragment, matched) => ({
       type: "delegate",
-      amount: `${matched[1].value}uluna`,
+      amount: attachDenom(matched[1].value),
       recipient: matched[0].value,
     }),
   }
@@ -96,7 +97,7 @@ const create = () => {
     rule: rule.unDelegateRule,
     transform: (fragment, matched) => ({
       type: "unDelegate",
-      amount: `${matched[1].value}uluna`,
+      amount: attachDenom(matched[1].value),
       sender: matched[0].value,
       withdraw_date: matched[2].value,
     }),

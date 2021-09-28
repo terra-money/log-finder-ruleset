@@ -1,7 +1,6 @@
-import { TxInfo } from "@terra-money/terra.js"
 import { LogFinderActionResult } from "./types"
 
-export const collector = (result: LogFinderActionResult[], tx: TxInfo.Data) => {
+export const collector = (result: LogFinderActionResult[]) => {
   const returnArray: LogFinderActionResult[] = []
   result.forEach((value) => {
     if (value.transformed) {
