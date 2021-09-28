@@ -1,4 +1,3 @@
-import { TxInfo } from "@terra-money/terra.js"
 import { LogFinderActionResult } from "./types"
 
 export const collector = (result: LogFinderActionResult[]) => {
