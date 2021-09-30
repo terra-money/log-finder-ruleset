@@ -1,8 +1,6 @@
 {
   "dependencies": {
     "@terra-money/log-finder": "^1.1.6",
-    "@terra-money/terra.js": "^2.0.5",
-    "@types/is-base64": "^1.1.1",
-    "is-base64": "^1.1.0"
+    "@terra-money/terra.js": "^2.0.5"
   }
 }

@@ -1,6 +1,5 @@
 import { ReturningLogFinderResult } from "@terra-money/log-finder"
 import { TxInfo } from "@terra-money/terra.js"
-import isBase64 from "is-base64"
 import { Action, Amount, LogFinderActionResult } from "./types"
 
 const decodeBase64 = (str: string) => {
@@ -10,6 +9,11 @@ const decodeBase64 = (str: string) => {
     return str
   }
 }
+
+const base64Regex =
+  /^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$/
+
+const isBase64 = (value: string) => base64Regex.test(value)
 
 const isBase64Extended = (value: string) =>
   // we are only interested in json-alike base64's, which generally start with "ey" ('{')
