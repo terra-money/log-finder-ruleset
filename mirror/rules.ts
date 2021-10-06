@@ -87,6 +87,21 @@ export const createMirrorRules = ({
       ["amount"],
     ],
   },
+  unstakeLPRuleTypeB: {
+    type: "from_contract",
+    attributes: [
+      ["contract_address", stakingAddress],
+      ["action", "unbond"],
+      ["staker_addr"],
+      ["asset_token"],
+      ["amount"],
+      ["contract_address"],
+      ["action", "transfer"],
+      ["from", stakingAddress],
+      ["to"],
+      ["amount"],
+    ],
+  },
   lpStakingRewardRule: {
     type: "from_contract",
     attributes: [

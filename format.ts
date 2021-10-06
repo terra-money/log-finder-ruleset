@@ -29,7 +29,7 @@ export const getTxCanonicalMsgs = (
 
       const logMatched = matched.map((match) => collector(match))
 
-      if (!(logMatched.flat().length > 0)) {
+      if (logMatched.flat().length <= 0) {
         const defaultCanonicalMsg = defaultAction(tx)
         return [defaultCanonicalMsg]
       }

@@ -32,11 +32,9 @@ const rules = {
       ["swap_fee"],
     ],
   },
-  msgSwapTerraSwapRule: {
+  msgTerraSwapRule: {
     type: "from_contract",
     attributes: [
-      ["contract_address"],
-      ["action", "swap"],
       ["offer_asset"],
       ["ask_asset"],
       ["offer_amount"],
@@ -321,12 +319,12 @@ const create = () => {
     }),
   }
 
-  const msgSwapTerraSwapRuleSet: LogFindersActionRuleSet = {
-    rule: rules.msgSwapTerraSwapRule,
+  const msgTerraSwapRuleSet: LogFindersActionRuleSet = {
+    rule: rules.msgTerraSwapRule,
     transform: (fragment, matched) => ({
       msgType: "terra/swap",
       canonicalMsg: [
-        `Swap ${matched[4].value}${matched[2].value} for ${matched[5].value}${matched[3].value}`,
+        `Swap ${matched[2].value}${matched[0].value} for ${matched[3].value}${matched[1].value}`,
       ],
       payload: fragment,
     }),
@@ -372,7 +370,7 @@ const create = () => {
     msgStoreCodeRuleSet,
     msgMigrateContractRuleSet,
     msgInstantiateContractRuleSet,
-    msgSwapTerraSwapRuleSet,
+    msgTerraSwapRuleSet,
     msgMultiSendRuleSet,
     msgGrantAuthorizationRuleSet,
   ]
