@@ -1,4 +1,13 @@
 {
+  "name": "@terra-money/log-finder-ruleset",
+  "version": "0.0.1",
+  "description": "",
+  "main": "dist/index.js",
+  "author": "Terraform Labs, PTE.",
+  "scripts": {
+    "build": "tsc",
+    "prepublish": "npm run build"
+  },
   "dependencies": {
     "@terra-money/log-finder": "^1.1.6",
     "@terra-money/terra.js": "^2.0.5"

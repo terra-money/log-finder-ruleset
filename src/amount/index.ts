@@ -67,7 +67,7 @@ const rule = {
 const create = () => {
   const nativeSendRule: LogFindersAmountRuleSet = {
     rule: rule.nativeSendRule,
-    transform: (fragment, matched) => ({
+    transform: (_, matched) => ({
       type: "send",
       amount: matched[2].value,
       sender: matched[1].value,
@@ -77,7 +77,7 @@ const create = () => {
 
   const nativeMultiSendRule: LogFindersAmountRuleSet = {
     rule: rule.nativeMultiSendRule,
-    transform: (fragment, matched) => ({
+    transform: (_, matched) => ({
       type: "multiSend",
       amount: matched[1].value,
       recipient: matched[0].value,
@@ -86,7 +86,7 @@ const create = () => {
 
   const delegateRule: LogFindersAmountRuleSet = {
     rule: rule.delegateRule,
-    transform: (fragment, matched) => ({
+    transform: (_, matched) => ({
       type: "delegate",
       amount: attachDenom(matched[1].value),
       recipient: matched[0].value,
@@ -95,7 +95,7 @@ const create = () => {
 
   const unDelegateRule: LogFindersAmountRuleSet = {
     rule: rule.unDelegateRule,
-    transform: (fragment, matched) => ({
+    transform: (_, matched) => ({
       type: "unDelegate",
       amount: attachDenom(matched[1].value),
       sender: matched[0].value,
@@ -105,7 +105,7 @@ const create = () => {
 
   const cw20SendRule: LogFindersAmountRuleSet = {
     rule: rule.cw20SendRule,
-    transform: (fragment, matched) => ({
+    transform: (_, matched) => ({
       type: "cw20Send",
       amount: `${matched[4].value}${matched[0].value}`,
       sender: matched[2].value,
@@ -115,7 +115,7 @@ const create = () => {
 
   const cw20TransferRule: LogFindersAmountRuleSet = {
     rule: rule.cw20TransferRule,
-    transform: (fragment, matched) => ({
+    transform: (_, matched) => ({
       type: "cw20Transfer",
       amount: `${matched[4].value}${matched[0].value}`,
       sender: matched[2].value,
@@ -125,7 +125,7 @@ const create = () => {
 
   const cw20MintRule: LogFindersAmountRuleSet = {
     rule: rule.cw20MintRule,
-    transform: (fragment, matched) => ({
+    transform: (_, matched) => ({
       type: "cw20Mint",
       amount: `${matched[3].value}${matched[0].value}`,
       recipient: matched[2].value,
@@ -134,7 +134,7 @@ const create = () => {
 
   const cw20TransferFromRule: LogFindersAmountRuleSet = {
     rule: rule.cw20TransferFromRule,
-    transform: (fragment, matched) => ({
+    transform: (_, matched) => ({
       type: "cw20TransferFrom",
       amount: `${matched[5].value}${matched[0].value}`,
       sender: matched[2].value,
@@ -144,7 +144,7 @@ const create = () => {
 
   const cw20BurnRule: LogFindersAmountRuleSet = {
     rule: rule.cw20BurnRule,
-    transform: (fragment, matched) => ({
+    transform: (_, matched) => ({
       type: "cw20Burn",
       amount: `${matched[3].value}${matched[0].value}`,
       sender: matched[2].value,
