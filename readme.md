@@ -26,7 +26,7 @@ const network = "mainnet"
 
 // getTxCanonicalMsgs
 const actionRuleset = createActionRuleSet(network)
-const logMatcher = createLogMatcherForActions(ruleset)
+const logMatcher = createLogMatcherForActions(actionRuleset)
 const matchedMsg = getTxCanonicalMsgs(JSON.stringify(tx), logMatcher)
 
 console.log(matchedMsg)
@@ -34,7 +34,7 @@ console.log(matchedMsg)
 
 // getTxAmountInfo
 const amountRuleset = createAmountRuleSet(network)
-const logMatcher = createLogMatcherForAmounts(ruleset)
+const logMatcher = createLogMatcherForAmounts(amountRuleset)
 const matchedMsg = getTxAmounts(JSON.stringify(tx), logMatcher, address)
 
 console.log(matchedMsg)
