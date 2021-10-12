@@ -1,3 +1,7 @@
+# @terra-money/log-finder-ruleset
+
+Terra standard ruleset for well known log patterns
+
 ## Example codes
 
 ```typescript
