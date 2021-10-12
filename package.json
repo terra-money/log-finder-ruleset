@@ -5,6 +5,9 @@
   "main": "dist/index.js",
   "author": "Terraform Labs, PTE.",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx}\"",
