@@ -69,6 +69,15 @@ const create = (network: string) => {
     }),
   }
 
+  const unstakeLPRuleSetTypeB: LogFindersActionRuleSet = {
+    rule: rules.unstakeLPRuleTypeB,
+    transform: (fragment, matched) => ({
+      msgType: "mirror/unstake-LP",
+      canonicalMsg: [`Unstake ${matched[9].value}${matched[5].value}`],
+      payload: fragment,
+    }),
+  }
+
   const lpStakingRewardRuleSet: LogFindersActionRuleSet = {
     rule: rules.lpStakingRewardRule,
     transform: (fragment, matched) => ({
@@ -212,6 +221,7 @@ const create = (network: string) => {
     burnRuleSet,
     stakeLPRuleSet,
     unstakeLPRuleSet,
+    unstakeLPRuleSetTypeB,
     lpStakingRewardRuleSet,
     govStakeRuleSet,
     govUnstakeRuleSet,

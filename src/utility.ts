@@ -10,10 +10,10 @@ const decodeBase64 = (str: string) => {
   }
 }
 
-const base64Regex =
+const BASE64_REGEX =
   /^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$/
 
-const isBase64 = (value: string) => base64Regex.test(value)
+const isBase64 = (value: string) => BASE64_REGEX.test(value)
 
 const isBase64Extended = (value: string) =>
   // we are only interested in json-alike base64's, which generally start with "ey" ('{')
