@@ -10,4 +10,6 @@ export type {
   LogFinderAmountResult,
   LogFindersActionRuleSet,
   LogFindersAmountRuleSet,
+  Action,
+  Amount,
 } from "./types"
