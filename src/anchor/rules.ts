@@ -16,6 +16,7 @@ export const createAnchorRules = ({
   bETHAddress,
   bETHCustodyAddress,
   bETHRwardAddress,
+  liquidationAddress,
 }: AnchorAddresses) => ({
   depositStableRule: {
     type: "from_contract",
@@ -406,6 +407,58 @@ export const createAnchorRules = ({
       ["action", "decrease_balance"],
       ["holder_address"],
       ["amount"],
+    ],
+  },
+  submitBidRule: {
+    type: "from_contract",
+    attributes: [
+      ["contract_address", liquidationAddress],
+      ["action", "submit_bid"],
+      ["bid_idx"],
+      ["amount"],
+    ],
+  },
+  retractBidRule: {
+    type: "from_contract",
+    attributes: [
+      ["contract_address", liquidationAddress],
+      ["action", "retract_bid"],
+      ["bid_idx"],
+      ["amount"],
+    ],
+  },
+  executeBidRule: {
+    type: "from_contract",
+    attributes: [
+      ["contract_address", bLunaAddress],
+      ["action", "send"],
+      ["from"],
+      ["to", liquidationAddress],
+      ["amount"],
+      ["contract_address", bLunaRwardAddress],
+      ["action", "decrease_balance"],
+      ["holder_address"],
+      ["amount"],
+      ["contract_address", bLunaRwardAddress],
+      ["action", "increase_balance"],
+      ["holder_address", liquidationAddress],
+      ["amount"],
+      ["contract_address", liquidationAddress],
+      ["action", "execute_bid"],
+      ["stable_denom"],
+      ["repay_amount"],
+      ["bid_fee"],
+      ["collateral_token"],
+      ["collateral_amount"],
+    ],
+  },
+  claimLiquidationRule: {
+    type: "from_contract",
+    attributes: [
+      ["contract_address", liquidationAddress],
+      ["action", "claim_liquidations"],
+      ["collateral_token"],
+      ["collateral_amount"],
     ],
   },
 })

@@ -14,6 +14,7 @@ export interface AnchorAddresses {
   AncUstLPAddress: string
   govAddress: string
   airdropAddress: string
+  liquidationAddress: string
 }
 
 export const mainnet: AnchorAddresses = {
@@ -32,6 +33,7 @@ export const mainnet: AnchorAddresses = {
   bETHAddress: "terra1dzhzukyezv0etz22ud940z7adyv7xgcjkahuun",
   bETHRwardAddress: "terra1939tzfn4hn960ychpcsjshu8jds3zdwlp8jed9",
   bETHCustodyAddress: "terra10cxuzggyvvv44magvrh3thpdnk9cmlgk93gmx2",
+  liquidationAddress: "terra1e25zllgag7j9xsun3me4stnye2pcg66234je3u",
 }
 
 export const testnet: AnchorAddresses = {
@@ -50,4 +52,5 @@ export const testnet: AnchorAddresses = {
   bETHAddress: "terra19mkj9nec6e3y5754tlnuz4vem7lzh4n0lc2s3l",
   bETHRwardAddress: "terra1ja3snkedk4t0zp7z3ljd064hcln8dsv5x004na",
   bETHCustodyAddress: "terra1j6fey5tl70k9fvrv7mea7ahfr8u2yv7l23w5e6",
+  liquidationAddress: "terra18j0wd0f62afcugw2rx5y8e6j5qjxd7d6qsc87r",
 }

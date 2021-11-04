@@ -256,6 +256,48 @@ const create = (network: string) => {
     }),
   }
 
+  const submitBidRule: LogFindersActionRuleSet = {
+    rule: rules.submitBidRule,
+    transform: (fragment, matched) => ({
+      msgType: "anchor/submit-bid",
+      canonicalMsg: [
+        `Submit ${matched[3].value}uusd bid to ${matched[0].value}`,
+      ],
+      payload: fragment,
+    }),
+  }
+
+  const retractBidRule: LogFindersActionRuleSet = {
+    rule: rules.retractBidRule,
+    transform: (fragment, matched) => ({
+      msgType: "anchor/retract-bid",
+      canonicalMsg: [
+        `Retract ${matched[3].value}uusd bid from ${matched[0].value}`,
+      ],
+      payload: fragment,
+    }),
+  }
+
+  const executeBidRule: LogFindersActionRuleSet = {
+    rule: rules.executeBidRule,
+    transform: (fragment, matched) => ({
+      msgType: "anchor/execute-bid",
+      canonicalMsg: [`Liquidation executed by ${matched[2].value}`],
+      payload: fragment,
+    }),
+  }
+
+  const claimLiquidationRule: LogFindersActionRuleSet = {
+    rule: rules.claimLiquidationRule,
+    transform: (fragment, matched) => ({
+      msgType: "anchor/claim-liquidations",
+      canonicalMsg: [
+        `Claim ${matched[3].value}${matched[2].value} from liquidations`,
+      ],
+      payload: fragment,
+    }),
+  }
+
   return [
     depositStableRuleSet,
     redeemStableRuleSet,
@@ -281,6 +323,10 @@ const create = (network: string) => {
     castVoteRuleSet,
     bETHmintRule,
     bETHburnRule,
+    submitBidRule,
+    retractBidRule,
+    executeBidRule,
+    claimLiquidationRule,
   ]
 }
 
