@@ -1,28 +1,26 @@
 import { TxInfo, Event } from "@terra-money/terra.js"
 import { ReturningLogFinderResult } from "@terra-money/log-finder"
 import { collector } from "./collector"
+import { defaultAction, formatLogs } from "./utility"
 import {
   LogFinderActionResult,
   LogFinderAmountResult,
   Amount,
   Action,
 } from "./types"
-import { defaultAction, formatLogs } from "./utility"
 
 export const getTxCanonicalMsgs = (
-  data: string,
+  txInfo: TxInfo,
   logMatcher: (events: Event[]) => ReturningLogFinderResult<Action>[][]
 ): LogFinderActionResult[][] => {
   try {
-    const tx: TxInfo.Data = JSON.parse(data)
-
-    const matched: LogFinderActionResult[][] | undefined = tx?.logs?.map(
+    const matched: LogFinderActionResult[][] | undefined = txInfo?.logs?.map(
       (log) => {
         const matchLog = logMatcher(log.events)
         const matchedPerLog: LogFinderActionResult[] = matchLog
           ?.flat()
           .filter(Boolean)
-          .map((data) => ({ ...data, timestamp: tx.timestamp }))
+          .map((data) => ({ ...data, timestamp: txInfo.timestamp }))
         return matchedPerLog
       }
     )
@@ -34,12 +32,12 @@ export const getTxCanonicalMsgs = (
       (logMatched && logMatched.flat().length <= 0)
     ) {
       // not matched rulesets or transaction failed or log is null (old network)
-      const defaultCanonicalMsg = defaultAction(tx)
+      const defaultCanonicalMsg = defaultAction(txInfo.tx)
       return [defaultCanonicalMsg]
     }
 
     return logMatched
-  } catch {
+  } catch (e) {
     const fragment = {
       type: "Unknown",
       attributes: [],
@@ -62,7 +60,7 @@ export const getTxAmounts = (
   try {
     const tx: TxInfo.Data = JSON.parse(data)
     if (tx.logs) {
-      const msgTypes = tx.tx.value.msg
+      const msgTypes = tx.tx.body.messages
       const { timestamp, txhash } = tx
 
       const matched: LogFinderAmountResult[][] = tx.logs.map((log, index) => {
@@ -71,7 +69,7 @@ export const getTxAmounts = (
           ?.flat()
           .filter(Boolean)
           .map((data) => {
-            const msgType = msgTypes[index].type.split("/")[1]
+            const msgType = msgTypes[index]["@type"].split("/")[1]
             return formatLogs(data, msgType, address, timestamp, txhash)
           })
 

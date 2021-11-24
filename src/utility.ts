@@ -1,5 +1,5 @@
 import { ReturningLogFinderResult } from "@terra-money/log-finder"
-import { TxInfo } from "@terra-money/terra.js"
+import { Tx } from "@terra-money/terra.js"
 import { Action, Amount, LogFinderActionResult } from "./types"
 
 const decodeBase64 = (str: string) => {
@@ -38,8 +38,8 @@ const decodeExecuteMsg = (str: string | object) => {
   return JSON.stringify(str, undefined, 2)
 }
 
-export const defaultAction = (tx: TxInfo.Data) => {
-  const msgs = tx.tx.value.msg
+export const defaultAction = (tx: Tx) => {
+  const msgs = tx.body.messages
 
   const action: LogFinderActionResult[] = []
   const fragment = {
@@ -53,13 +53,13 @@ export const defaultAction = (tx: TxInfo.Data) => {
   }
 
   msgs.forEach((msg) => {
-    if (msg.type === "wasm/MsgExecuteContract") {
-      const contract = msg.value.contract
-      const executeMsg = msg.value.execute_msg
+    const msgInfo = msg.toData()
+    if (msgInfo["@type"] === "/terra.wasm.v1beta1.MsgExecuteContract") {
+      const { contract, execute_msg } = msgInfo
 
       // successful wasm decode
       try {
-        const decodeMsg = JSON.parse(decodeExecuteMsg(executeMsg))
+        const decodeMsg = JSON.parse(decodeExecuteMsg(execute_msg))
         const key = Object.keys(decodeMsg)[0]
         const transformed: Action = {
           msgType: "wasm/execute",
@@ -80,10 +80,13 @@ export const defaultAction = (tx: TxInfo.Data) => {
         })
       }
     } else {
-      const msgTyps = msg.type.split("/")
+      const type = msg.toData()["@type"]
+      const sliceIndex = type.indexOf("Msg")
+      const renderType = type.slice(sliceIndex)
+
       const transformed: Action = {
-        msgType: `terra/${msgTyps[0] || "terra"}`,
-        canonicalMsg: [msgTyps[1] || "Unknown tx"],
+        msgType: `terra/${renderType || "terra"}`,
+        canonicalMsg: [renderType || "Unknown tx"],
         payload: fragment,
       }
 
