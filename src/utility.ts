@@ -1,5 +1,5 @@
 import { ReturningLogFinderResult } from "@terra-money/log-finder"
-import { TxInfo } from "@terra-money/terra.js"
+import { Msg, TxInfo } from "@terra-money/terra.js"
 import { Action, Amount, LogFinderActionResult } from "./types"
 
 const decodeBase64 = (str: string) => {
@@ -36,62 +36,6 @@ const decodeExecuteMsg = (str: string | object) => {
     }
   }
   return JSON.stringify(str, undefined, 2)
-}
-
-export const defaultAction = (tx: TxInfo.Data) => {
-  const msgs = tx.tx.value.msg
-
-  const action: LogFinderActionResult[] = []
-  const fragment = {
-    type: "Unknown",
-    attributes: [],
-  }
-
-  const result: LogFinderActionResult = {
-    fragment,
-    match: [],
-  }
-
-  msgs.forEach((msg) => {
-    if (msg.type === "wasm/MsgExecuteContract") {
-      const contract = msg.value.contract
-      const executeMsg = msg.value.execute_msg
-
-      // successful wasm decode
-      try {
-        const decodeMsg = JSON.parse(decodeExecuteMsg(executeMsg))
-        const key = Object.keys(decodeMsg)[0]
-        const transformed: Action = {
-          msgType: "wasm/execute",
-          canonicalMsg: [`Execute ${key || "default"} on ${contract}`],
-          payload: fragment,
-        }
-
-        action.push({ ...result, transformed })
-      } catch (e) {
-        // comes here, then it's unknown
-        action.push({
-          ...result,
-          transformed: {
-            msgType: "wasm/execute",
-            canonicalMsg: [`Execute default on ${contract}`],
-            payload: fragment,
-          },
-        })
-      }
-    } else {
-      const msgTyps = msg.type.split("/")
-      const transformed: Action = {
-        msgType: `terra/${msgTyps[0] || "terra"}`,
-        canonicalMsg: [msgTyps[1] || "Unknown tx"],
-        payload: fragment,
-      }
-
-      action.push({ ...result, transformed })
-    }
-  })
-
-  return action
 }
 
 export const formatLogs = (
@@ -136,3 +80,63 @@ export const formatLogs = (
 
 export const attachDenom = (string: string) =>
   string.includes("uluna") ? `${string}` : `${string}uluna`
+
+export const defaultMsgsAction = (tx: TxInfo.Data) => {
+  const msgs = tx.tx.value.msg
+  const action: LogFinderActionResult[] = []
+
+  msgs.forEach((msg) => {
+    action.push(defaultMsgAction(msg))
+  })
+
+  return action
+}
+
+export const defaultMsgAction = (msg: Msg.Data) => {
+  const fragment = {
+    type: "Unknown",
+    attributes: [],
+  }
+
+  const result: LogFinderActionResult = {
+    fragment,
+    match: [],
+  }
+
+  if (msg.type === "wasm/MsgExecuteContract") {
+    const contract = msg.value.contract
+    const executeMsg = msg.value.execute_msg
+
+    // successful wasm decode
+    try {
+      const decodeMsg = JSON.parse(decodeExecuteMsg(executeMsg))
+      const key = Object.keys(decodeMsg)[0]
+      const transformed: Action = {
+        msgType: "wasm/execute",
+        canonicalMsg: [`Execute ${key || "default"} on ${contract}`],
+        payload: fragment,
+      }
+
+      return { ...result, transformed }
+    } catch (e) {
+      // comes here, then it's unknown
+      return {
+        ...result,
+        transformed: {
+          msgType: "wasm/execute",
+          canonicalMsg: [`Execute default on ${contract}`],
+          payload: fragment,
+        },
+      }
+    }
+  } else {
+    const msgTypes = msg.type.split("/")
+    const transformed: Action = {
+      msgType: `terra/${msgTypes[0] || "terra"}`,
+      canonicalMsg: [msgTypes[1] || "Unknown tx"],
+      payload: fragment,
+    }
+
+    return { ...result, transformed }
+  }
+}
