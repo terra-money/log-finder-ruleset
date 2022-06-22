@@ -62,6 +62,26 @@ const rule = {
       ["amount"],
     ],
   },
+  wasmSendRule: {
+    type: "wasm",
+    attributes: [
+      ["_contract_address"],
+      ["action", "send"],
+      ["from"],
+      ["to"],
+      ["amount"],
+    ],
+  },
+  wasmTransferRule: {
+    type: "wasm",
+    attributes: [
+      ["_contract_address"],
+      ["action", "transfer"],
+      ["from"],
+      ["to"],
+      ["amount"],
+    ],
+  },
 }
 
 const create = () => {
@@ -151,6 +171,26 @@ const create = () => {
     }),
   }
 
+  const wasmSendRule: LogFindersAmountRuleSet = {
+    rule: rule.wasmSendRule,
+    transform: (_, matched) => ({
+      type: "send",
+      amount: `${matched[4].value}${matched[0].value}`,
+      sender: matched[2].value,
+      recipient: matched[3].value,
+    }),
+  }
+
+  const wasmTransferRule: LogFindersAmountRuleSet = {
+    rule: rule.wasmTransferRule,
+    transform: (_, matched) => ({
+      type: "transfer",
+      amount: `${matched[4].value}${matched[0].value}`,
+      sender: matched[2].value,
+      recipient: matched[3].value,
+    }),
+  }
+
   return [
     nativeSendRule,
     nativeMultiSendRule,
@@ -161,6 +201,8 @@ const create = () => {
     cw20MintRule,
     cw20TransferFromRule,
     cw20BurnRule,
+    wasmSendRule,
+    wasmTransferRule,
   ]
 }
 
