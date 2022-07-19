@@ -1,6 +1,6 @@
 {
   "name": "@terra-money/log-finder-ruleset",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Terra standard ruleset for well known log patterns",
   "main": "dist/index.js",
   "author": "Terraform Labs, PTE.",
@@ -18,13 +18,10 @@
     "type": "git",
     "url": "git://github.com/terra-money/log-finder-ruleset.git"
   },
-  "peerDependencies": {
-    "@terra-money/terra.js": "^3"
-  },
   "dependencies": {
     "@terra-money/log-finder": "^1.1.6"
   },
   "devDependencies": {
-    "@terra-money/terra.js": "^3.0.1"
+    "@types/node": "^18.0.4"
   }
 }

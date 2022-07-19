@@ -1,6 +1,9 @@
 import { createReturningLogFinder } from "@terra-money/log-finder"
-import { Event } from "@terra-money/terra.js"
-import { LogFindersAmountRuleSet, LogFindersActionRuleSet } from "./types"
+import {
+  LogFindersAmountRuleSet,
+  LogFindersActionRuleSet,
+  TxEvent,
+} from "./types"
 
 export const createLogMatcherForActions = (
   injectedLogFindersRuleSet: LogFindersActionRuleSet[] = []
@@ -10,7 +13,7 @@ export const createLogMatcherForActions = (
   const logFinders = logFindersRuleSet.map(({ rule, transform }) =>
     createReturningLogFinder(rule, transform)
   )
-  return (events: Event[]) =>
+  return (events: TxEvent[]) =>
     events?.flatMap((event) =>
       logFinders?.map((logFinderFn) => logFinderFn(event))
     )
@@ -24,7 +27,7 @@ export const createLogMatcherForAmounts = (
   const logFinders = logFindersRuleSet.map(({ rule, transform }) =>
     createReturningLogFinder(rule, transform)
   )
-  return (events: Event[]) =>
+  return (events: TxEvent[]) =>
     events?.flatMap((event) =>
       logFinders?.map((logFinderFn) => logFinderFn(event))
     )

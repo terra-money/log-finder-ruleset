@@ -14,7 +14,7 @@ import {
   getTxAmounts
 } from "@terra-money/log-finder-ruleset"
 
-// https://lcd.terra.dev/txs/:txhash
+// https://phoenix-lcd.terra.dev/cosmos/tx/v1beta1/txs/:txhash
 const tx = {
   "height": ...,
   "txhash": ...,
@@ -31,7 +31,7 @@ const network = "mainnet"
 // getTxCanonicalMsgs
 const actionRuleset = createActionRuleSet(network)
 const actionLogMatcher = createLogMatcherForActions(actionRuleset)
-const actionMatchedMsg = getTxCanonicalMsgs(JSON.stringify(tx), actionLogMatcher)
+const actionMatchedMsg = getTxCanonicalMsgs(tx, actionLogMatcher)
 
 console.log(actionMatchedMsg)
 
@@ -39,7 +39,7 @@ console.log(actionMatchedMsg)
 // getTxAmountInfo
 const amountRuleset = createAmountRuleSet(network)
 const amountLogMatcher = createLogMatcherForAmounts(amountRuleset)
-const amountMatchedMsg = getTxAmounts(JSON.stringify(tx), amountLogMatcher, address)
+const amountMatchedMsg = getTxAmounts(tx, amountLogMatcher, address)
 
 console.log(amountMatchedMsg)
 

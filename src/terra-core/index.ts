@@ -44,6 +44,18 @@ const rules = {
       ["commission_amount"],
     ],
   },
+  wasmTerraSwapRule: {
+    type: "wasm",
+    attributes: [
+      ["offer_asset"],
+      ["ask_asset"],
+      ["offer_amount"],
+      ["return_amount"],
+      ["tax_amount"],
+      ["spread_amount"],
+      ["commission_amount"],
+    ],
+  },
   msgExchangeRateVoteRule: {
     type: "vote",
     attributes: [["denom"], ["voter"], ["exchange_rate"], ["feeder"]],
@@ -330,6 +342,17 @@ const create = () => {
     }),
   }
 
+  const wasmTerraSwapRuleSet: LogFindersActionRuleSet = {
+    rule: rules.wasmTerraSwapRule,
+    transform: (fragment, matched) => ({
+      msgType: "terra/swap",
+      canonicalMsg: [
+        `Swap ${matched[2].value}${matched[0].value} for ${matched[3].value}${matched[1].value}`,
+      ],
+      payload: fragment,
+    }),
+  }
+
   const msgMultiSendRuleSet: LogFindersActionRuleSet = {
     rule: rules.msgMultiSendRule,
     transform: (fragment, matched) => ({
@@ -373,6 +396,7 @@ const create = () => {
     msgTerraSwapRuleSet,
     msgMultiSendRuleSet,
     msgGrantAuthorizationRuleSet,
+    wasmTerraSwapRuleSet,
   ]
 }
 export default create

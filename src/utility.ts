@@ -1,6 +1,11 @@
 import { ReturningLogFinderResult } from "@terra-money/log-finder"
-import { Tx } from "@terra-money/terra.js"
-import { Action, Amount, LogFinderActionResult } from "./types"
+import {
+  Action,
+  Amount,
+  LogFinderActionResult,
+  Message,
+  Transaction,
+} from "./types"
 
 const decodeBase64 = (str: string) => {
   try {
@@ -26,22 +31,18 @@ const reviver = (_: string, value: any) =>
     ? JSON.parse(decodeBase64(value), reviver)
     : value
 
-const decodeExecuteMsg = (str: string | object) => {
-  if (typeof str === "string" && isBase64Extended(str)) {
-    const decoded = decodeBase64(str)
-    try {
-      return JSON.stringify(JSON.parse(decoded, reviver), null, 2)
-    } catch {
-      return decoded
-    }
-  }
-  return JSON.stringify(str, undefined, 2)
+export const defaultMsgsAction = (tx: Transaction) => {
+  const msgs = tx.tx.body.messages
+  const action: LogFinderActionResult[] = []
+
+  msgs.forEach((msg: Message) => {
+    action.push(defaultMsgAction(msg))
+  })
+
+  return action
 }
 
-export const defaultAction = (tx: Tx) => {
-  const msgs = tx.body.messages
-
-  const action: LogFinderActionResult[] = []
+export const defaultMsgAction = (msg: Message) => {
   const fragment = {
     type: "Unknown",
     attributes: [],
@@ -52,49 +53,42 @@ export const defaultAction = (tx: Tx) => {
     match: [],
   }
 
-  msgs.forEach((msg) => {
-    const msgInfo = msg.toData()
-    if (msgInfo["@type"] === "/terra.wasm.v1beta1.MsgExecuteContract") {
-      const { contract, execute_msg } = msgInfo
+  if (msg["@type"].includes("MsgExecuteContract")) {
+    const contract = msg?.contract
+    const executeMsg = msg?.execute_msg || msg?.msg
 
-      // successful wasm decode
-      try {
-        const decodeMsg = JSON.parse(decodeExecuteMsg(execute_msg))
-        const key = Object.keys(decodeMsg)[0]
-        const transformed: Action = {
-          msgType: "wasm/execute",
-          canonicalMsg: [`Execute ${key || "default"} on ${contract}`],
-          payload: fragment,
-        }
-
-        action.push({ ...result, transformed })
-      } catch (e) {
-        // comes here, then it's unknown
-        action.push({
-          ...result,
-          transformed: {
-            msgType: "wasm/execute",
-            canonicalMsg: [`Execute default on ${contract}`],
-            payload: fragment,
-          },
-        })
-      }
-    } else {
-      const type = msg.toData()["@type"]
-      const sliceIndex = type.indexOf("Msg")
-      const renderType = type.slice(sliceIndex)
-
+    // successful wasm decode
+    try {
+      const key = Object.keys(executeMsg)[0]
       const transformed: Action = {
-        msgType: `terra/${renderType || "terra"}`,
-        canonicalMsg: [renderType || "Unknown tx"],
+        msgType: "wasm/execute",
+        canonicalMsg: [`Execute ${key || "default"} on ${contract}`],
         payload: fragment,
       }
 
-      action.push({ ...result, transformed })
+      return { ...result, transformed }
+    } catch (e) {
+      // comes here, then it's unknown
+      return {
+        ...result,
+        transformed: {
+          msgType: "wasm/execute",
+          canonicalMsg: [`Execute default on ${contract}`],
+          payload: fragment,
+        },
+      }
     }
-  })
+  } else {
+    const type = msg?.["@type"]
+    const msgType = type?.split("Msg")
+    const transformed: Action = {
+      msgType: `terra/${msgType?.[0] || "terra"}`,
+      canonicalMsg: ["Msg" + msgType?.[msgType?.length - 1] || "Unknown tx"],
+      payload: fragment,
+    }
 
-  return action
+    return { ...result, transformed }
+  }
 }
 
 export const formatLogs = (

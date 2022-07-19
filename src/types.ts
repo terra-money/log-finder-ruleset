@@ -50,3 +50,47 @@ export interface LogFinderAmountResult {
   transformed?: Amount
   txhash?: string
 }
+
+export interface TxEvent {
+  type: string
+  attributes: {
+    key: string
+    value: string
+  }[]
+}
+
+export interface TxLog {
+  msg_index: number
+  log: string
+  events: TxEvent[]
+}
+
+export interface Message {
+  contract: string
+  execute_msg: object
+  msg: object
+  "@type": string
+}
+
+export interface Tx {
+  body: {
+    messages: Message[]
+    memo: string
+  }
+  auth_info: {
+    fee: [{ amount: string; denom: string }]
+  }
+}
+
+export interface Transaction {
+  height: number
+  txhash: string
+  raw_log: string
+  logs: TxLog[] | undefined
+  gas_wanted: number
+  gas_used: number
+  tx: Tx
+  timestamp: string
+  code?: number | undefined
+  codespace?: string | undefined
+}
