@@ -65,20 +65,15 @@ export interface TxLog {
   events: TxEvent[]
 }
 
-export interface Message {
-  contract: string
-  execute_msg: object
-  msg: object
-  "@type": string
-}
+export type Message = any
 
 export interface Tx {
   body: {
     messages: Message[]
-    memo: string
+    memo?: string
   }
   auth_info: {
-    fee: [{ amount: string; denom: string }]
+    fee: any
   }
 }
 
