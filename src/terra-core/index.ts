@@ -6,6 +6,10 @@ const rules = {
     type: "transfer",
     attributes: [["recipient"], ["sender"], ["amount"]],
   },
+  msgTransferRule: {
+    type: "transfer",
+    attributes: [["sender"], ["receiver"], ["amount"], ["source_channel"], ["source_port"]],
+  },
   msgWithdrawDelegationRewardRule: {
     type: "withdraw_rewards",
     attributes: [["amount"], ["validator"]],
@@ -146,6 +150,17 @@ const create = () => {
       msgType: "terra/send",
       canonicalMsg: [
         `${matched[1].value} send ${matched[2].value} to ${matched[0].value}`,
+      ],
+      payload: fragment,
+    }),
+  }
+
+  const msgTransferRuleSet: LogFindersActionRuleSet = {
+    rule: rules.msgTransferRule,
+    transform: (fragment, matched) => ({
+      msgType: "terra/ibc-transfer",
+      canonicalMsg: [
+        `${matched[0].value} send ${matched[2].value} to ${matched[1].value} via IBC (source_channel: ${matched[3].value}, source_port: ${matched[4].value})`,
       ],
       payload: fragment,
     }),
@@ -389,6 +404,7 @@ const create = () => {
     msgEditValidatorRuleSet,
     msgDelegateRuleSet,
     msgCreateValidatorRuleSet,
+    msgTransferRuleSet,
     msgBeginRedelegateRuleSet,
     msgStoreCodeRuleSet,
     msgMigrateContractRuleSet,
