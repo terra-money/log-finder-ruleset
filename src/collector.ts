@@ -13,6 +13,7 @@ export const collector = (result: LogFinderActionResult[] | undefined) => {
           "delegate",
           "undelegate",
           "begin-redelegate",
+          "withdraw-delegation-reward"
         ]
 
         if (!types.includes(action)) {
