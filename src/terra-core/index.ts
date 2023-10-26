@@ -128,15 +128,32 @@ const rules = {
 }
 
 const showVoteOption = (string: string) => {
-  const voteOptions = ["Yes", "Abstain", "No", "NoWithVeto"]
+  const voteOptions = {
+    VOTE_OPTION_YES: "Yes",
+    VOTE_OPTION_ABSTAIN: "Abstain",
+    VOTE_OPTION_NO: "No",
+    VOTE_OPTION_NO_WITH_VETO: "No With Veto"
+  }
+
+  const regex = new RegExp(/^{?"?option"?:([A-Z_|\d]*?)[,\s]"?weight"?:"?([\d\.]*)/)
+  const matches = string.match(regex)
 
   try {
-    const vote = JSON.parse(string)
-    const option = parseInt(vote.option)
-    return voteOptions[option - 1]
-  } catch {
-    return string
+    if (matches && matches[1] && parseFloat(matches[2])) {
+      if (parseInt(matches[1])) {
+        const option = parseInt(matches[1])
+        // console.log("JSON string", voteOptions[Object.keys(voteOptions)[option - 1] as keyof typeof voteOptions], matches[2])
+        return {voteType: voteOptions[Object.keys(voteOptions)[option - 1] as keyof typeof voteOptions], weight: parseFloat(matches[2]).toFixed(1)}
+      } else {
+        // console.log("Normal string", voteOptions[matches[1] as keyof typeof voteOptions], matches[2])
+        return {voteType: voteOptions[matches[1] as keyof typeof voteOptions], weight: parseFloat(matches[2]).toFixed(1)}
+      }
+    }
+  } catch (e) {
+    console.error(e)
   }
+
+  return {voteType: string}
 }
 
 const create = () => {
@@ -166,16 +183,17 @@ const create = () => {
 
   const msgVoteRuleSet: LogFindersActionRuleSet = {
     rule: rules.msgVoteRule,
-    transform: (fragment, matched) => ({
+    transform: (fragment, matched) => {
+      const {voteType, weight} = showVoteOption(matched[0].value)
+      const weightString = weight && parseFloat(weight) !== 1 ? ` with weight ${weight}` : ''
+      return {
       msgType: "terra/vote",
       canonicalMsg: [
-        `Vote ${showVoteOption(matched[0].value)} (Proposal ID: ${
-          matched[1].value
-        })`,
+        `Voted ${voteType} on PID${matched[1].value}${weightString}`,
       ],
       payload: fragment,
-    }),
-  }
+    }
+  }}
 
   const msgSubmitProposalRuleSet: LogFindersActionRuleSet = {
     rule: rules.msgSubmitProposalRule,
