@@ -142,11 +142,15 @@ const showVoteOption = (string: string) => {
     if (matches && matches[1] && parseFloat(matches[2])) {
       if (parseInt(matches[1])) {
         const option = parseInt(matches[1])
-        // console.log("JSON string", voteOptions[Object.keys(voteOptions)[option - 1] as keyof typeof voteOptions], matches[2])
-        return {voteType: voteOptions[Object.keys(voteOptions)[option - 1] as keyof typeof voteOptions], weight: parseFloat(matches[2]).toFixed(1)}
+        return {
+          voteType: voteOptions[Object.keys(voteOptions)[option - 1] as keyof typeof voteOptions],
+          weight: parseFloat(matches[2]).toFixed(1)
+        }
       } else {
-        // console.log("Normal string", voteOptions[matches[1] as keyof typeof voteOptions], matches[2])
-        return {voteType: voteOptions[matches[1] as keyof typeof voteOptions], weight: parseFloat(matches[2]).toFixed(1)}
+        return {
+          voteType: voteOptions[matches[1] as keyof typeof voteOptions],
+          weight: parseFloat(matches[2]).toFixed(1)
+        }
       }
     }
   } catch (e) {
@@ -159,14 +163,23 @@ const showVoteOption = (string: string) => {
 const create = () => {
   const msgSendRuleSet: LogFindersActionRuleSet = {
     rule: rules.msgSendRule,
-    transform: (fragment, matched) => ({
+    transform: (fragment, matched) => {
+      let msg
+      if (matched[1].value.startsWith('wallet:')) {
+        msg = `Sent ${matched[2].value} to ${matched[0].value}`
+      } else if (matched[0].value.startsWith('wallet:')) {
+        msg = `Received ${matched[2].value} from ${matched[1].value}`
+      } else {
+        msg = `${matched[1].value} sent ${matched[2].value} to ${matched[0].value}`
+      }
+      return ({
       msgType: "terra/send",
       canonicalMsg: [
-        `${matched[1].value} send ${matched[2].value} to ${matched[0].value}`,
+        msg,
       ],
       payload: fragment,
-    }),
-  }
+    })
+  }}
 
   const msgWithdrawDelegationRewardRuleSet: LogFindersActionRuleSet = {
     rule: rules.msgWithdrawDelegationRewardRule,
@@ -174,8 +187,8 @@ const create = () => {
       msgType: "terra/withdraw-delegation-reward",
       canonicalMsg: [
         matched[0].value
-          ? `Withdraw ${matched[0].value} from ${matched[1].value}`
-          : `Withdraw from ${matched[1].value}`,
+          ? `Withdrew ${matched[0].value} staking rewards from ${matched[1].value}`
+          : `Withdrew staking rewards from ${matched[1].value}`,
       ],
       payload: fragment,
     }),
@@ -189,7 +202,7 @@ const create = () => {
       return {
       msgType: "terra/vote",
       canonicalMsg: [
-        `Voted ${voteType} on PID${matched[1].value}${weightString}`,
+        `Voted ${voteType} on proposal:${matched[1].value}${weightString}`,
       ],
       payload: fragment,
     }
@@ -199,7 +212,7 @@ const create = () => {
     rule: rules.msgSubmitProposalRule,
     transform: (fragment, matched) => ({
       msgType: "terra/submit-proposal",
-      canonicalMsg: [`Create proposal (Proposal ID: ${matched[0].value})`],
+      canonicalMsg: [`Created proposal proposal:${matched[0].value}`],
       payload: fragment,
     }),
   }
@@ -209,7 +222,7 @@ const create = () => {
     transform: (fragment, matched) => ({
       msgType: "terra/deposit",
       canonicalMsg: [
-        `Deposit ${matched[0].value} (Proposal ID: ${matched[1].value})`,
+        `Deposited ${matched[0].value} to proposal:${matched[1].value}`,
       ],
       payload: fragment,
     }),
@@ -219,7 +232,7 @@ const create = () => {
     rule: rules.msgSwapRule,
     transform: (fragment, matched) => ({
       msgType: "terra/swap",
-      canonicalMsg: [`Swap ${matched[0].value} for ${matched[3].value}`],
+      canonicalMsg: [`Swapped ${matched[0].value} for ${matched[3].value}`],
       payload: fragment,
     }),
   }
@@ -228,7 +241,7 @@ const create = () => {
     rule: rules.msgExchangeRateVoteRule,
     transform: (fragment, matched) => ({
       msgType: "terra/exchange-rate-vote",
-      canonicalMsg: [`Vote ${matched[2].value} for ${matched[0].value}`],
+      canonicalMsg: [`Voted ${matched[2].value} for ${matched[0].value}`],
       payload: fragment,
     }),
   }
@@ -237,7 +250,7 @@ const create = () => {
     rule: rules.msgExchangeRatePrevoteRule,
     transform: (fragment, matched) => ({
       msgType: "terra/exchange-rate-prevote",
-      canonicalMsg: [`Prevote for ${matched[0].value}`],
+      canonicalMsg: [`Prevoted for ${matched[0].value}`],
       payload: fragment,
     }),
   }
@@ -246,7 +259,7 @@ const create = () => {
     rule: rules.msgAggregateExchangeRateVoteRule,
     transform: (fragment, matched) => ({
       msgType: "terra/aggregate-exchange-rate-vote",
-      canonicalMsg: [`Vote ${matched[1].value}`],
+      canonicalMsg: [`Voted ${matched[1].value}`],
       payload: fragment,
     }),
   }
@@ -255,7 +268,7 @@ const create = () => {
     rule: rules.msgAggregateExchangeRatePrevoteRule,
     transform: (fragment) => ({
       msgType: "terra/aggregate-exchange-rate-prevote",
-      canonicalMsg: [`Prevote for all`],
+      canonicalMsg: [`Prevoted for all`],
       payload: fragment,
     }),
   }
@@ -264,7 +277,7 @@ const create = () => {
     rule: rules.msgUnjailRule,
     transform: (fragment, matched) => ({
       msgType: "terra/unjail",
-      canonicalMsg: [`Unjail ${matched[2].value}`],
+      canonicalMsg: [`Unjailed ${matched[2].value}`],
       payload: fragment,
     }),
   }
@@ -274,7 +287,7 @@ const create = () => {
     transform: (fragment, matched) => ({
       msgType: "terra/undelegate",
       canonicalMsg: [
-        `Undelegate ${attachDenom(matched[1].value)} to ${matched[0].value}`,
+        `Undelegated ${attachDenom(matched[1].value)} to ${matched[0].value}`,
       ],
       payload: fragment,
     }),
@@ -294,7 +307,7 @@ const create = () => {
     transform: (fragment, matched) => ({
       msgType: "terra/delegate",
       canonicalMsg: [
-        `Delegate ${attachDenom(matched[1].value)} to ${matched[0].value}`,
+        `Delegated ${attachDenom(matched[1].value)} to ${matched[0].value}`,
       ],
       payload: fragment,
     }),
@@ -304,7 +317,7 @@ const create = () => {
     rule: rules.msgCreateValidatorRule,
     transform: (fragment, matched) => ({
       msgType: "terra/create-validator",
-      canonicalMsg: [`Create ${matched[0].value}`],
+      canonicalMsg: [`Created ${matched[0].value}`],
       payload: fragment,
     }),
   }
@@ -314,7 +327,7 @@ const create = () => {
     transform: (fragment, matched) => ({
       msgType: "terra/begin-redelegate",
       canonicalMsg: [
-        `Redelegate ${attachDenom(matched[2].value)} to ${matched[1].value}`,
+        `Redelegated ${attachDenom(matched[2].value)} to ${matched[1].value}`,
       ],
       payload: fragment,
     }),
@@ -324,7 +337,7 @@ const create = () => {
     rule: rules.msgStoreCodeRule,
     transform: (fragment, matched) => ({
       msgType: "terra/store-code",
-      canonicalMsg: [`Store ${matched[1].value}`],
+      canonicalMsg: [`Stored ${matched[1].value}`],
       payload: fragment,
     }),
   }
@@ -333,7 +346,7 @@ const create = () => {
     rule: rules.msgMigrateContractRule,
     transform: (fragment, matched) => ({
       msgType: "terra/migrate-contract",
-      canonicalMsg: [`Migrate ${matched[1].value} to code ${matched[0].value}`],
+      canonicalMsg: [`Migrated ${matched[1].value} to code ${matched[0].value}`],
       payload: fragment,
     }),
   }
@@ -343,7 +356,7 @@ const create = () => {
     transform: (fragment, matched) => ({
       msgType: "terra/instantiate-contract",
       canonicalMsg: [
-        `Instantiate ${matched[2].value} from code ${matched[1].value}`,
+        `Instantiated ${matched[2].value} from code ${matched[1].value}`,
       ],
       payload: fragment,
     }),
@@ -354,7 +367,7 @@ const create = () => {
     transform: (fragment, matched) => ({
       msgType: "terra/swap",
       canonicalMsg: [
-        `Swap ${matched[2].value}${matched[0].value} for ${matched[3].value}${matched[1].value}`,
+        `Swapped ${matched[2].value}${matched[0].value} for ${matched[3].value}${matched[1].value}`,
       ],
       payload: fragment,
     }),
@@ -365,7 +378,7 @@ const create = () => {
     transform: (fragment, matched) => ({
       msgType: "terra/swap",
       canonicalMsg: [
-        `Swap ${matched[2].value}${matched[0].value} for ${matched[3].value}${matched[1].value}`,
+        `Swapped ${matched[2].value}${matched[0].value} for ${matched[3].value}${matched[1].value}`,
       ],
       payload: fragment,
     }),
@@ -375,7 +388,7 @@ const create = () => {
     rule: rules.msgMultiSendRule,
     transform: (fragment, matched) => ({
       msgType: "terra/multi-send",
-      canonicalMsg: [`Send ${matched[1].value} to ${matched[0].value}`],
+      canonicalMsg: [`Sent ${matched[1].value} to ${matched[0].value}`],
       payload: fragment,
     }),
   }

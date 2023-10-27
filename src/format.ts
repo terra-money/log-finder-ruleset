@@ -15,14 +15,11 @@ import {
 export const getTxCanonicalMsgs = (
   txInfo: Transaction,
   logMatcher: (events: TxEvent[]) => ReturningLogFinderResult<Action>[][],
-  // addresses?: Record<string, string>
+  addresses?: Record<string, string>
 ): LogFinderActionResult[][] => {
-  console.log('hash', txInfo.txhash)
-  // console.log(addresses)
   try {
     const matched: LogFinderActionResult[][] | undefined = txInfo?.logs?.map(
       (log: TxLog, index: number) => {
-        // console.log("logs.events", log.events)
         const matchLog = logMatcher(log.events)
 
         if (matchLog.flat().length === 0) {
@@ -41,7 +38,7 @@ export const getTxCanonicalMsgs = (
       }
     )
 
-    const logMatched = matched?.map((match) => collector(match))
+    const logMatched = matched?.map((match) => collector(match, addresses))
 
     if (logMatched === undefined || logMatched?.length === 0) {
       // not matched rulesets or transaction failed or log is null (old network)
@@ -53,8 +50,6 @@ export const getTxCanonicalMsgs = (
         defaultCanonicalMsg[index],
       ])
     }
-
-    // console.log('logMatched', typeof logMatched[0]?.addresses)
 
     return logMatched
   } catch (e) {
