@@ -37,7 +37,7 @@ export const collector = (result: LogFinderActionResult[] | undefined, addresses
           // Remove txs where the Distribution Module is the sender.
           // These txs normally accompany an action tx and effectively duplicate history messages.
           if (match.key === 'sender' && match.value === "terra1jv65s3grqf6v6jl3dp4t6c9t9rk99cd8pm7utl") {
-            result = result?.splice(result.indexOf(res) - 1, 1)
+            result?.splice(result.indexOf(res), 1)
           }
         }
       }
