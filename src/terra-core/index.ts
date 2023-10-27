@@ -135,18 +135,21 @@ const showVoteOption = (string: string) => {
     VOTE_OPTION_NO_WITH_VETO: "No With Veto"
   }
 
+  // Extract vote option and weight from provided string.
   const regex = new RegExp(/^{?"?option"?:([A-Z_|\d]*?)[,\s]"?weight"?:"?([\d\.]*)/)
   const matches = string.match(regex)
 
   try {
     if (matches && matches[1] && parseFloat(matches[2])) {
       if (parseInt(matches[1])) {
+        // If option returned is an integer, get corresponding vote option string.
         const option = parseInt(matches[1])
         return {
           voteType: voteOptions[Object.keys(voteOptions)[option - 1] as keyof typeof voteOptions],
           weight: parseFloat(matches[2]).toFixed(1)
         }
       } else {
+        // If option is a string, the value should correspond to a key of voteOptions.
         return {
           voteType: voteOptions[matches[1] as keyof typeof voteOptions],
           weight: parseFloat(matches[2]).toFixed(1)
@@ -164,6 +167,7 @@ const create = () => {
   const msgSendRuleSet: LogFindersActionRuleSet = {
     rule: rules.msgSendRule,
     transform: (fragment, matched) => {
+      // Evaluate send message based on if the matched address is the user's address.
       let msg
       if (matched[1].value.startsWith('wallet:')) {
         msg = `Sent ${matched[2].value} to ${matched[0].value}`
