@@ -191,8 +191,8 @@ const create = () => {
       msgType: "terra/withdraw-delegation-reward",
       canonicalMsg: [
         matched[0].value
-          ? `Withdrew ${matched[0].value} staking rewards from validator ${matched[1].value}`
-          : `Withdrew staking rewards from validator ${matched[1].value}`,
+          ? `Withdrew ${matched[0].value} staking rewards from ${matched[1].value}`
+          : `Withdrew staking rewards from ${matched[1].value}`,
       ],
       payload: fragment,
     }),
@@ -206,7 +206,7 @@ const create = () => {
       return {
       msgType: "terra/vote",
       canonicalMsg: [
-        `Voted ${voteType} on proposal:${matched[1].value} proposal${weightString}`,
+        `Voted ${voteType} on proposal:${matched[1].value}${weightString}`,
       ],
       payload: fragment,
     }
@@ -216,7 +216,7 @@ const create = () => {
     rule: rules.msgSubmitProposalRule,
     transform: (fragment, matched) => ({
       msgType: "terra/submit-proposal",
-      canonicalMsg: [`Created proposal proposal:${matched[0].value}`],
+      canonicalMsg: [`Created proposal:${matched[0].value}`],
       payload: fragment,
     }),
   }
@@ -226,7 +226,7 @@ const create = () => {
     transform: (fragment, matched) => ({
       msgType: "terra/deposit",
       canonicalMsg: [
-        `Deposited ${matched[0].value} to proposal:${matched[1].value} proposal`,
+        `Deposited ${matched[0].value} to proposal:${matched[1].value}`,
       ],
       payload: fragment,
     }),
@@ -291,7 +291,7 @@ const create = () => {
     transform: (fragment, matched) => ({
       msgType: "terra/undelegate",
       canonicalMsg: [
-        `Undelegated ${attachDenom(matched[1].value)} from validator ${matched[0].value}`,
+        `Undelegated ${attachDenom(matched[1].value)} from ${matched[0].value}`,
       ],
       payload: fragment,
     }),
@@ -311,7 +311,7 @@ const create = () => {
     transform: (fragment, matched) => ({
       msgType: "terra/delegate",
       canonicalMsg: [
-        `Delegated ${attachDenom(matched[1].value)} to validator ${matched[0].value}`,
+        `Delegated ${attachDenom(matched[1].value)} to ${matched[0].value}`,
       ],
       payload: fragment,
     }),
