@@ -14,7 +14,8 @@ import {
 
 export const getTxCanonicalMsgs = (
   txInfo: Transaction,
-  logMatcher: (events: TxEvent[]) => ReturningLogFinderResult<Action>[][]
+  logMatcher: (events: TxEvent[]) => ReturningLogFinderResult<Action>[][],
+  addresses?: Record<string, string>
 ): LogFinderActionResult[][] => {
   try {
     const matched: LogFinderActionResult[][] | undefined = txInfo?.logs?.map(
@@ -37,7 +38,7 @@ export const getTxCanonicalMsgs = (
       }
     )
 
-    const logMatched = matched?.map((match) => collector(match))
+    const logMatched = matched?.map((match) => collector(match, addresses))
 
     if (logMatched === undefined || logMatched?.length === 0) {
       // not matched rulesets or transaction failed or log is null (old network)

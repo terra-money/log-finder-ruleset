@@ -37,6 +37,7 @@ export interface LogFinderActionResult {
   height?: number
   transformed?: Action
   txhash?: string
+  addresses?: Record<string, string>
 }
 
 export interface LogFinderAmountResult {

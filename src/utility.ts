@@ -62,7 +62,7 @@ export const defaultMsgAction = (msg: Message) => {
       const key = Object.keys(executeMsg)[0]
       const transformed: Action = {
         msgType: "wasm/execute",
-        canonicalMsg: [`Execute ${key || "default"} on ${contract}`],
+        canonicalMsg: [`Executed ${key || "default"} on ${contract}`],
         payload: fragment,
       }
 
@@ -73,7 +73,7 @@ export const defaultMsgAction = (msg: Message) => {
         ...result,
         transformed: {
           msgType: "wasm/execute",
-          canonicalMsg: [`Execute default on ${contract}`],
+          canonicalMsg: [`Executed default on ${contract}`],
           payload: fragment,
         },
       }
